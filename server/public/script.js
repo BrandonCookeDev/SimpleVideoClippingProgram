@@ -51,6 +51,8 @@ myApp.controller('homeCtrl', function($scope, $http){
 		$scope.sanitizeObjectInputs();
 		var cmd = createClipWithObject($scope.file);
 		
+		var messageArea = document.getElementById('statusMessage');
+		messageArea.innerHTML = 'Creating ' + $scope.file.outputFileName + '...';
 		$http({
 			method: 'POST',
 			url: '/createClip',
@@ -58,15 +60,19 @@ myApp.controller('homeCtrl', function($scope, $http){
 				command: cmd
 			}
 		})
-		.then(
-		() => {
+		.then( 
+		function(data, status, headers, config){
 			//SUCCESS
 			console.log('create clip was successful');
+			messageArea.innerHTML = 'Creating ' + $scope.file.outputFileName + '...' + 'Created!';
 		}, 
-		(err) => {
+		(err, status, headers, config) => {
 			//FAILURE
 			console.log('create clip call failed: ' + err);
+			messageArea.innerHTML = 'Creating clip failed...';
 		});
+		
+		window.setTimeout($scope.$apply(), 15000);
 	};
 	
 });
@@ -76,22 +82,3 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
-/*
-directive("fileread", [function () {
-    return {
-        scope: {
-            fileread: "="
-        },
-        link: function (scope, element, attributes) {
-            element.bind("change", function (changeEvent) {
-                var reader = new FileReader();
-                reader.onload = function (loadEvent) {
-                    scope.$apply(function () {
-                        scope.fileread = loadEvent.target.result;
-                    });
-                }
-                reader.readAsDataURL(changeEvent.target.files[0]);
-            });
-        }
-    }
-}]);*/
