@@ -66,12 +66,23 @@
 				</table>
 				<input type='submit' value='Generate Clip' id='submitClipForm' /> <p id='statusMessage' ng-model='statusMessage' ></p>
 			</form>
+			<br />
+			<hr />
+			<!--
+			<form id="my-dropzone" action="/parseFile" class="dropzone">
+			-->
+			<div id="myDropzone">
+				Drop File Here for Automation
+			</div>
+			</form>
 		</div>
 		
+			
 		
 		<script src='node_modules/angular/angular.min.js'></script>
 		<script src='node_modules/jquery/dist/jquery.min.js'></script>
 		<script src='node_modules/bootstrap/dist/js/bootstrap.min.js'></script>
+		<script src='node_modules/dropzone/dist/dropzone.js'></script>
 		<script src='clip.js'></script>
 		<script src='script.js'></script>
 	</body>

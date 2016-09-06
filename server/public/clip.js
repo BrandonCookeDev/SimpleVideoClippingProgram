@@ -6,7 +6,7 @@ var usage = "USAGE node clip.js [input file] [start time] [end time] [output fil
 			
 if(process.argv.length != 6){
 	console.log(usage);
-	process.exit(1);
+	//process.exit(1); 
 }
  var program = process.argv[1];
  var input = process.argv[2];
@@ -140,3 +140,8 @@ if(process.argv.length != 6){
 	 
 	 return cmd;
  };
+ 
+ module.exports = {
+	createClip: createClip,
+	createClipWithObject: createClipWithObject
+ }

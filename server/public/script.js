@@ -74,8 +74,51 @@ myApp.controller('homeCtrl', function($scope, $http){
 		
 		window.setTimeout($scope.$apply(), 15000);
 	};
+	  
+	$scope.sendFile = function(file){
+		$http({
+			method: 'POST',
+			url: '/parseFile',
+			data: {
+				file: file		
+				}
+			}
+		);
+	};
 	
+	var myDropzone = new Dropzone("div#myDropzone", { 
+		url: "/uploadFile",
+		autoProcessQueue : true,
+		dictDefaultMessage: "Drop files or click here to upload a new DICOM series ...",
+		init : function() {
+
+			myDropzone = this;
+
+			//Restore initial message when queue has been completed
+			this.on("drop", function(event) {
+				console.log(myDropzone.files);            
+				var target = myDropzone.files[0];
+				
+			});
+
+		}
+	});
+	
+	
+	/*
+	Dropzone.options.myDropzone({
+	  init: function() {
+		this.on("error", function(file, message) { alert(message); });
+	  }
+	});	
+	*/
 });
+
+// Add Dropzone into page for automation file drop.
+//var myDropzone = Dropzone.forElement("div#my-awesome-dropzone");
+//myDropzone.on("error", function(file, message) { alert(message); });
+
+
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
