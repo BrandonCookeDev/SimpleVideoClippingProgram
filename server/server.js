@@ -1,14 +1,14 @@
 var express = require('express');
 var fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
-var clip = require('./public/clip.js');
+var clip = require('./clip.js');
 const execSync = require('child_process').execSync;
 
 var portGl = 1337;
 var hostGl = '127.0.0.1';
 
 var app = express();
-app.use("/", express.static(__dirname + '/public'));
+app.use("/", express.static(__dirname + '../public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(fileUpload());
