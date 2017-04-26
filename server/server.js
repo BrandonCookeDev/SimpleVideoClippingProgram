@@ -1,27 +1,35 @@
-var express = require('express');
-var fileUpload = require('express-fileupload');
-var bodyParser = require('body-parser');
-var clip = require('./clip.js');
-const execSync = require('child_process').execSync;
+var Clip 		= require('./lib/clip.js');
 
-var portGl = 1337;
-var hostGl = '127.0.0.1';
+var express 	= require('express');
+var bodyParser 	= require('body-parser');
+var fileUpload 	= require('express-fileupload');
+var execSync 	= require('child_process').execSync;
+
+var portGl 		= 1337;
+var hostGl 		= '127.0.0.1';
+var publicDir 	= __dirname + '/../client/public';
 
 var app = express();
-app.use("/", express.static(__dirname + '../public'));
+app.use(express.static(publicDir));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(fileUpload());
 
-app.get('/', function (req, res) {
-   res.send('Hello World');
+app.get('/', function(req, res) {
+	res.sendFile(publicDir + '/index.html');
 });
 
-app.get('/home', function(req, res) {
-	res.sendFile(__dirname + '/public/index.html');
+app.post('/createClip',function(req, res){
+	var input 	  = req.body.input;
+	var startTime = req.body.startTime;
+	var endTime   = req.body.endTime;
+	var output	  = req.body.output;
+
+	var clip = new Clip(input, startTime, endTime, output);
+
 });
 
-app.post('/createClip', function(req, res){
+app.post('/createClipFromCommand', function(req, res){
 	var cmd = req.body.command;
 	console.log('  [SERVER] FFMPEG running command');
 	console.log('--------------------------------------\n');
@@ -51,7 +59,7 @@ app.post('/uploadFile', function(req, res){
 		}catch(err){
 			console.log(err);
 			res.sendStatus(500);
-		};
+		}
 		
 		res.sendStatus(200);
 	}
@@ -61,8 +69,8 @@ app.post('/uploadFile', function(req, res){
 
 var server = app.listen(portGl, function () {
 
-  var host = server.address().address
-  var port = server.address().port
+  var host = server.address().address;
+  var port = server.address().port;
 
   console.log("Example app listening at http://%s:%s", host, port)
 

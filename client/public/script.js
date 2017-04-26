@@ -57,7 +57,10 @@ myApp.controller('homeCtrl', function($scope, $http){
 			method: 'POST',
 			url: '/createClip',
 			data:{
-				command: cmd
+				input: $scope.file.inputFile,
+				startTime: $scope.file.ssString,
+				endTime: $scope.file.endString,
+				output: $scope.file.outputFileName
 			}
 		})
 		.then( 
