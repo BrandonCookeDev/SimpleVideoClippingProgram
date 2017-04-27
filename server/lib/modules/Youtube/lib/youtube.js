@@ -1,3 +1,4 @@
+var log = require('winston');
 
 class Youtube{
 

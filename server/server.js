@@ -1,5 +1,12 @@
-var Clip 		= require('./lib/clip.js');
+var Clip = require('./lib/modules/Clips');
+var Cli	 = require('./lib/modules/CLI');
+var LocalVideo = require('./lib/modules/LocalVideo');
+var Youtube	   = require('./lib/modules/Youtube');
 
+//ADD MODULE TO THIS TO INIT ENDPOINTS LATER
+var modules = [Clip, Cli, LocalVideo, Youtube];
+
+var log 		= require('winston');
 var express 	= require('express');
 var bodyParser 	= require('body-parser');
 var fileUpload 	= require('express-fileupload');
@@ -7,7 +14,7 @@ var execSync 	= require('child_process').execSync;
 
 var portGl 		= 1337;
 var hostGl 		= '127.0.0.1';
-var publicDir 	= __dirname + '/../client/public';
+var publicDir 	= __dirname + '/../client';
 
 var app = express();
 app.use(express.static(publicDir));
@@ -15,28 +22,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(fileUpload());
 
+//INIT MODULE ENDPOINTS
+modules.forEach(function(module){
+	module.endpoints(app);
+    log.info('Loaded Module: ' + module.name);
+});
+
 app.get('/', function(req, res) {
-	res.sendFile(publicDir + '/index.html');
-});
-
-app.post('/createClip',function(req, res){
-	var input 	  = req.body.input;
-	var startTime = req.body.startTime;
-	var endTime   = req.body.endTime;
-	var output	  = req.body.output;
-
-	var clip = new Clip(input, startTime, endTime, output);
-
-});
-
-app.post('/createClipFromCommand', function(req, res){
-	var cmd = req.body.command;
-	console.log('  [SERVER] FFMPEG running command');
-	console.log('--------------------------------------\n');
-	console.log(cmd + '\n');
-	console.log('--------------------------------------\n');
-	execSync(cmd);
-	res.sendStatus(200);
+	res.sendFile(publicDir + '/webapp/index.html');
 });
 
 app.post('/uploadFile', function(req, res){

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html ng-app='myApp'>
+	<head>
+		<link rel="stylesheet" type="text/css" href='../node_modules/bootstrap/dist/css/bootstrap.min.css' />
+		<link rel="stylesheet" type="text/css" href='../node_modules/purecss/build/base.css'/>
+		<link rel="stylesheet" type="text/css" href='../node_modules/purecss/build/forms.css'/>
+		<link rel="stylesheet" type="text/css" href='styles/style.css' />
+	</head>
+	<body>
+		<div ng-controller='homeCtrl' id='formDiv' class='container'>
+			<div class="col-lg-6 col-md-6 col-sm-12">
+				<form class='pure-form' ng-submit='submitClipRequest()' ng-model='inputFile' id='clipForm'>
+					<h2>Clip Creator Form</h2>
+					<table>
+					<tr>
+						<td>Input Video File</td>
+						<td>
+						<input type='text' id='inputFile' ng-model='file.inputFile'/>
+						<!--
+						<input type='file' id='inputFile' ng-model='file.inputFile' onchange="angular.element(this).scope().fileNameChanged(this)"/>
+						-->
+						</td>
+					</tr>
+					<tr>
+						<td>Start Time</td>
+						<td>
+							 <input type='number' max='99' min='00' ng-model='file.ss.Hour' size='2'/>
+							 <input type='number' max='99' min='00' ng-model='file.ss.Minute' size='2'/>
+							 <input type='number' max='99' min='00' ng-model='file.ss.Second' size='2'/>
+						</td>
+					</tr>
+					<tr>
+						<td>End Time</td>
+						<td>
+							 <input type='number' max='99' min='00' ng-model='file.end.Hour' size='2'/>
+							 <input type='number' max='99' min='00' ng-model='file.end.Minute' size='2'/>
+							 <input type='number' max='99' min='00' ng-model='file.end.Second' size='2'/>
+						</td>
+					</tr>
+					<tr>
+						<td>Tournament Name</td>
+						<td>  <input type='text' id='tournamentName' ng-model='file.tournamentName' /> </td>
+					</tr>
+					<tr>
+						<td>Round</td>
+						<td><input type='text' id='roundText' ng-model='file.round' /></td>
+					</tr>
+					<tr>
+						<td>Player1</td>
+						<td><input type='text' id='player1Text' ng-model='file.player1' /></td>
+					</tr>
+					<tr>
+						<td>Player2</td>
+						<td><input type='text' id='player2Text' ng-model='file.player2' /></td>
+					</tr>
+					<tr>
+						<td>Output File Name</td>
+						<td><input type='text' id='outputFileName' ng-model='file.outputFileName' style='{width: 200px;}'/> </br>
+							<input type='button' ng-click='changeOutputFilename()' value='Generate Name' />
+						</td>
+					</tr>
+					<tr>
+						<td>Audio Off?</td>
+						<td><input type='checkbox' ng-false-value='file.yesAudio' ng-true-value='file.noAudio'
+											id='audioCheckbox' /></td>
+					</tr>
+					</table>
+					<input type='submit' value='Generate Clip' id='submitClipForm' /> <p id='statusMessage' ng-model='statusMessage' ></p>
+				</form>
+				<br />
+				<hr />
+				<!--
+				<form id="my-dropzone" action="/parseFile" class="dropzone">
+				-->
+				<div id="myDropzone">
+					Drop File Here for Automation
+				</div>
+				</form>
+			</div>
+
+			<!-- VIDEO PREVIEW HERE -->
+			<div class="col-lg-6 col-md-6 col-sm-12">
+
+			</div>
+		</div>
+		
+			
+		
+		<script src='../node_modules/angular/angular.min.js'></script>
+		<script src='../node_modules/jquery/dist/jquery.min.js'></script>
+		<script src='../node_modules/bootstrap/dist/js/bootstrap.min.js'></script>
+		<script src='../node_modules/dropzone/dist/dropzone.js'></script>
+		<script src='lib/clip.js'></script>
+		<script src='scripts/script.js'></script>
+	</body>
+</html>
