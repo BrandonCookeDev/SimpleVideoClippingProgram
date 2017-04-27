@@ -2,7 +2,7 @@ var log = require('winston');
 
 class CliController{
 
-    create(req, res){
+    static create(req, res){
         try {
             var cmd = req.body.command;
             console.log('  [SERVER] FFMPEG running command');

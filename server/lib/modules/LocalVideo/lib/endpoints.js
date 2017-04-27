@@ -5,5 +5,5 @@ var ctrl    = require('./controller');
 
 module.exports = function(server){
     router.route('/localVideo/upload').post(ctrl.upload);
-    server.user(router);
+    server.use(router);
 };

@@ -144,4 +144,4 @@ if(process.argv.length != 6){
  module.exports = {
 	createClip: createClip,
 	createClipWithObject: createClipWithObject
- }
+ };
