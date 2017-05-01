@@ -1,6 +1,6 @@
 var Clip = require('./lib/modules/Clips');
 var Cli	 = require('./lib/modules/CLI');
-var LocalVideo = require('./lib/modules/LocalVideo');
+var LocalVideo = require('./lib/modules/VideoFile');
 var Youtube	   = require('./lib/modules/Youtube');
 
 //ADD MODULE TO THIS TO INIT ENDPOINTS LATER
@@ -24,12 +24,17 @@ app.use(fileUpload());
 
 //INIT MODULE ENDPOINTS
 modules.forEach(function(module){
-	module.endpoints(app);
-    log.info('Loaded Module: ' + module.name);
+	try {
+        module.endpoints(app);
+        log.info('Loaded Module: ' + module.name);
+    }
+    catch(err){
+		log.error(err.stack);
+	}
 });
 
 app.get('/', function(req, res) {
-	res.sendFile(publicDir + '/webapp/index.html');
+    res.sendFile(publicDir + '/webapp/index.html');
 });
 
 app.post('/uploadFile', function(req, res){
@@ -75,7 +80,7 @@ function parseFileToClipObject(fileBuffer){
 	var lines = bufStr.split(';');
 	var input, startTime, endTime, output;
 	var tournamentName, player1, player2, round;
-	
+
 	var first = true;
 	lines.forEach((line) => {
 		if(line == "") return;
@@ -91,24 +96,24 @@ function parseFileToClipObject(fileBuffer){
 			startTime = elements[2].trim();
 			endTime  = elements[3].trim();
 			round = elements[4].trim();
-			
+
 			tournamentName = tournamentName.replaceAll(" ", "_");
 			player1 = player1.replaceAll(" ", "_");
 			player2 = player2.replaceAll(" ", "_");
 			round = round.replaceAll(" ", "_");
 			output = (tournamentName + '-' + player1 + '-' + player2 + '-' + round + '.mp4').replaceAll(" ", "");
-					
+
 			var clip = {
 				input: input,
-				startTime: startTime, 
+				startTime: startTime,
 				endTime: endTime,
 				output: output
 			};
-			
+
 			clips.push(clip);
 		}
 	});
-	
+
 	return clips;
 };
 

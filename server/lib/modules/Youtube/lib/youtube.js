@@ -1,11 +1,17 @@
-var log = require('winston');
+var log         = require('winston');
+var youtubeApi  = require('youtube-api');
 
 class Youtube{
 
-    constructor(key, secret){
-
+    constructor(key, secret, file){
+        this.key = key;
+        this.secret = secret;
+        this.file = file;
     }
 
+    upload(){
+
+    }
 
 }
 
