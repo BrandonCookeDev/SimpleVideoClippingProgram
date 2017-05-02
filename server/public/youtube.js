@@ -8,18 +8,30 @@ let log             = require('winston');
 class Youtube{
     static init(){
         Youtube.CREDENTIALS = require('./youtube-credentials');
+        Youtube.oauth = null;
+        Youtube.code  = null;
+        Youtube.token = null;
+
+        Youtube.sendOAuth();
     }
 
-    constructor(file){
+    constructor(file, p1name, p2name, tournament, round, bracket){
         this.file = file;
+        this.p1name = p1name;
+        this.p2name = p2name;
+        this.tournament = tournament;
+        this.round = round;
+        this.bracket = bracket;
 
         this.oauth = null;
-        this.code  = null;
-        this.token = null;
     }
 
-    sendOAuth(){
-        this.oauth = youtube.authenticate({
+    static isAuthenticated(){
+        return (Youtube.oauth && Youtube.code && Youtube.token);
+    }
+
+    static sendOAuth(){
+        Youtube.oauth = youtube.authenticate({
             type: "oauth"
             , client_id: Youtube.CREDENTIALS.web.client_id
             , client_secret: Youtube.CREDENTIALS.web.client_secret
@@ -32,42 +44,57 @@ class Youtube{
         }));
     }
 
-    veryfyOAuth(code){
+    static verifyOAuth(code){
         this.code = code;
-
+        let thisYT = this;
         log.info("Trying to get the token using the following code: " + this.code);
-        this.oauth.getToken(code, (err, tokens) => {
+        return new Promise(function(resolve, reject){
+            this.oauth.getToken(thisYT.code, (err, tokens) => {
 
-            if (err) {
-                log.error(err.stack);
-                return new Error(err.message);
-            }
+                if (err) {
+                    log.error(err.stack);
+                    return new Error(err.message);
+                }
 
-            log.info("Got the tokens.");
-            this.oauth.setCredentials(tokens);
-            this.upload();
+                log.info("Got the tokens.");
+                thisYT.oauth.setCredentials(tokens);
+                resolve(tokens)
+            });
         });
+
     }
 
     upload(){
         log.info("The video is being uploaded. Check out the logs in the terminal.");
+        let details = this.createVideoDetails();
+
+        let fileLog = {
+            level: 'debug',
+            filename: './uploadLogs/' + details.title + new Date(),
+            handleExceptions: trues, //bool
+            json: false,  //bool
+            colorize: true //bool
+        };
+        log.add(log.transports.File, fileLog);
+
         let req = youtube.videos.insert({
             resource: {
                 // Video title and description
                 snippet: {
-                    title: "Testing YoutTube API NodeJS module"
-                    , description: "Test video upload via YouTube API"
-                }
+                    title: details.title,
+                    description: details.description,
+                    tags: details.tags
+                },
                 // I don't want to spam my subscribers
-                , status: {
-                    privacyStatus: "private"
+                status: {
+                    privacyStatus: "public"
                 }
-            }
+            },
             // This is for the callback function
-            , part: "snippet,status"
+            part: "snippet,status",
 
             // Create the readable stream to upload the video
-            , media: {
+            media: {
                 body: fs.createReadStream(this.file)
             }
         }, (err, data) => {
@@ -82,6 +109,47 @@ class Youtube{
         setInterval(function () {
             log.info(`${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: ` + this.file);
         }, 250);
+    }
+
+    createVideoDetails(){
+        let title = this.tournament + ' - ' + this.round + ' - ' + this.p1name + ' vs ' + this.p2name;
+        let description = this.tournament + '! View tournament info and brackets at ' + this.bracket +
+            '\n\n' +
+            'Watch live and follow us at: \n'  +
+            'http://twitch.tv/RecursionGG\n'   +
+            'http://twitter.com/RecursionGG\n' +
+            'http://facebook.com/RecursionGG\n';
+
+        //////////////////////////////////////////
+        // TAGS
+        let tags =
+            'ssbm, super, smash, bros, melee, recursion, recursiongg';
+        let p1split = this.p1name.split(' ');
+        let p2split = this.p2name.split(' ');
+        let roundSplit = this.round.split(' ');
+        let tournamentSplit = this.tournament.split(' ');
+
+        p1split.forEach(word => {
+            tags += ', ' + word;
+        });
+        p2split.forEach(word => {
+            tags += ', ' + word;
+        });
+        roundSplit.forEach(word => {
+            tags += ', ' + word;
+        });
+        tournamentSplit.forEach(word => {
+            tags += ', ' + word;
+        });
+
+
+        let deets = {
+            title: title,
+            details: details,
+            tags: tags
+        };
+
+        return deets;
     }
 }
 

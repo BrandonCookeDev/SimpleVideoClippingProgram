@@ -1,3 +1,9 @@
+var Youtube	= require('./public/youtube');
+var youtube = new Youtube();
+Youtube.init();
+
+var lot = require('winston');
+
 var express = require('express');
 var fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
@@ -19,6 +25,31 @@ app.get('/', function (req, res) {
 
 app.get('/home', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/youtube/auth', function(req, res){
+	Youtube.oauth();
+});
+
+app.post('/youtube/verifyAuth', function(req, res){
+	var code = req.body.code;
+	var verify = Youtube.verifyOAuth(code);
+});
+
+app.post('/upload', function(req, res){
+	var file = req.body.file;
+	var tournament = req.body.tournament;
+	var round = req.body.round;
+	var p1name = req.body.p1name;
+	var p2name = req.body.p2name;
+	var bracket = req.body.bracket;
+
+	var yt = new Youtube(file, p1name, p2name, tournament, round, bracket);
+	if(!Youtube.isAuthenticated())
+		res.sendStatus(500);
+	else{
+		yt.upload();
+	}
 });
 
 app.post('/createClip', function(req, res){
@@ -61,8 +92,8 @@ app.post('/uploadFile', function(req, res){
 
 var server = app.listen(portGl, function () {
 
-  var host = server.address().address
-  var port = server.address().port
+  var host = server.address().address;
+  var port = server.address().port;
 
   console.log("Example app listening at http://%s:%s", host, port)
 
