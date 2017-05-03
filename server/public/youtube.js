@@ -66,7 +66,7 @@ class Youtube{
 
     }
 
-    upload(){
+    upload(res){
         log.info("The video is being uploaded. Check out the logs in the terminal.");
         let details = this.createVideoDetails();
 
@@ -75,53 +75,61 @@ class Youtube{
             filename: './uploadLogs/' + details.title + new Date(),
             handleExceptions: true, //bool
             json: false,  //bool
-            colorize: true //bool
+            colorize: false //bool
         };
         log.add(log.transports.File, fileLog);
+        log.info('begin');
 
+        let done = false;
         let thisYT =  this;
-        try {
-            let req = youtube.videos.insert({
-                resource: {
-                    // Video title and description
-                    snippet: {
-                        title: details.title,
-                        description: details.description,
-                        tags: details.tags
+        return new Promise(function(resolve, reject) {
+            try{
+                let req = youtube.videos.insert({
+                    resource: {
+                        // Video title and description
+                        snippet: {
+                            title: details.title,
+                            description: details.description,
+                            tags: details.tags
+                        },
+                        // I don't want to spam my subscribers
+                        status: {
+                            privacyStatus: "public"
+                        }
                     },
-                    // I don't want to spam my subscribers
-                    status: {
-                        privacyStatus: "public"
+                    // This is for the callback function
+                    part: "snippet,status",
+
+                    // Create the readable stream to upload the video
+                    media: {
+                        body: fs.createReadStream(thisYT.file)
                     }
-                },
-                // This is for the callback function
-                part: "snippet,status",
+                }, (err, data) => {
+                    if (err) {
+                        log.error(err.stack);
+                    }
 
-                // Create the readable stream to upload the video
-                media: {
-                    body: fs.createReadStream(this.file)
-                }
-            }, (err, data) => {
-                if (err) {
-                    log.error(err.stack);
-                }
+                    clearInterval(logUpload);
+                    log.info("Done.");
+                    resolve(true);
+                });
 
-                log.info("Done.");
-                process.exit();
-            });
-
-            setInterval(function () {
-                try {
-                    log.info(`${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: ` + thisYT.file);
-                }catch(err){
-                    log.error(err.stack);
-                    console.error(err.message);
-                }
-            }, 250);
-        }catch(err){
-            log.error(err.stack);
-            console.error(err.message);
-        }
+                var logUpload = setInterval(function () {
+                    try {
+                        let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
+                        log.info( uploaded + thisYT.file);
+                    } catch (err) {
+                        log.error(err.stack);
+                        console.error(err.message);
+                        reject(err.message);
+                    }
+                }, 250);
+            }catch(err){
+                log.error(err.stack);
+                console.error(err.message);
+                reject(err.message);
+            }
+        })
     }
 
     createVideoDetails(){
@@ -159,7 +167,7 @@ class Youtube{
         let deets = {
             title: title,
             description: description,
-            tags: tags
+            tags: tags.split(',')
         };
 
         return deets;

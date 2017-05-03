@@ -77,8 +77,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 				}
 			})
 			.then(function(data, status, headers, config){
-                console.log('clip being uploaded: ' + err);
-                messageArea.innerHTML = 'Clip Being Uploaded...';
+                messageArea.innerHTML = data;
 			})
 		}, 
 		(err, status, headers, config) => {
