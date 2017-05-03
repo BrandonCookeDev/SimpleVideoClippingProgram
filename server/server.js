@@ -2,7 +2,7 @@ var Youtube	= require('./public/youtube');
 var youtube = new Youtube();
 Youtube.init();
 
-var lot = require('winston');
+var log = require('winston');
 
 var express = require('express');
 var fileUpload = require('express-fileupload');
@@ -31,18 +31,20 @@ app.get('/youtube/auth', function(req, res){
 	Youtube.oauth();
 });
 
-app.post('/youtube/verifyAuth', function(req, res){
-	var code = req.body.code;
+app.get('/youtube/authenticate', function(req, res){
+	var code = req.query.code;
 	var verify = Youtube.verifyOAuth(code);
 });
 
 app.post('/upload', function(req, res){
 	var file = req.body.file;
-	var tournament = req.body.tournament;
-	var round = req.body.round;
-	var p1name = req.body.p1name;
-	var p2name = req.body.p2name;
-	var bracket = req.body.bracket;
+
+	var input = file.inputFile;
+	var tournament = file.tournamentName;
+	var round = file.round;
+	var p1name = file.player1;
+	var p2name = file.player2;
+	var bracket = file.bracketUrl;
 
 	var yt = new Youtube(file, p1name, p2name, tournament, round, bracket);
 	if(!Youtube.isAuthenticated())
@@ -62,7 +64,7 @@ app.post('/createClip', function(req, res){
 	res.sendStatus(200);
 });
 
-app.post('/uploadFile', function(req, res){
+app.post('/uploadLocalFile', function(req, res){
 	var file = req.files;
 	console.log(file);
 	

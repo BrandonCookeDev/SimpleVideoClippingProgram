@@ -73,6 +73,7 @@ if(process.argv.length != 6){
 	 console.log('----------------------COMMAND-----------------------');
 	 
 	 execSync(cmd);
+	 return output;
  }
  
  function createClipWithObject(file){

@@ -41,6 +41,10 @@
 					<td>  <input type='text' id='tournamentName' ng-model='file.tournamentName' /> </td>
 				</tr>
 				<tr>
+					<td>Bracket Url</td>
+					<td><input type='text' id='bracketUrl' ng-model='file.bracketUrl' /></td>
+				</tr>
+				<tr>
 					<td>Round</td>
 					<td><input type='text' id='roundText' ng-model='file.round' /></td>
 				</tr>
@@ -58,11 +62,13 @@
 						<input type='button' ng-click='changeOutputFilename()' value='Generate Name' />
 					</td>
 				</tr>
+					<!--
 				<tr>
 					<td>Audio Off?</td>
 					<td><input type='checkbox' ng-false-value='file.yesAudio' ng-true-value='file.noAudio'
 										id='audioCheckbox' /></td>
 				</tr>
+					-->
 				</table>
 				<input type='submit' value='Generate Clip' id='submitClipForm' /> <p id='statusMessage' ng-model='statusMessage' ></p>
 			</form>

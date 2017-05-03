@@ -22,7 +22,8 @@ myApp.controller('homeCtrl', function($scope, $http){
 		player2 : '',
 		yesAudio : true,
 		noAudio : false,
-		outputFileName : ''
+		outputFileName : '',
+		bracketUrl: ''
 	};
 	
 	$scope.sanitizeObjectInputs = function(){

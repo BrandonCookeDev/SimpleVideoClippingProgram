@@ -49,7 +49,7 @@ class Youtube{
         let thisYT = this;
         log.info("Trying to get the token using the following code: " + this.code);
         return new Promise(function(resolve, reject){
-            this.oauth.getToken(thisYT.code, (err, tokens) => {
+            thisYT.oauth.getToken(thisYT.code, (err, tokens) => {
 
                 if (err) {
                     log.error(err.stack);
