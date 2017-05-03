@@ -66,10 +66,11 @@ class Youtube{
 
     }
 
-    upload(res){
+    upload(){
         log.info("The video is being uploaded. Check out the logs in the terminal.");
         let details = this.createVideoDetails();
 
+        /*
         let fileLog = {
             level: 'debug',
             filename: './uploadLogs/' + details.title + new Date(),
@@ -79,6 +80,7 @@ class Youtube{
         };
         log.add(log.transports.File, fileLog);
         log.info('begin');
+        */
 
         let done = false;
         let thisYT =  this;
@@ -129,7 +131,7 @@ class Youtube{
                 console.error(err.message);
                 reject(err.message);
             }
-        })
+        });
     }
 
     createVideoDetails(){

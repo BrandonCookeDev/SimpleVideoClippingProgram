@@ -73,7 +73,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 				method: 'POST',
 				url: '/upload',
 				data:{
-					file: $scope.file
+					file: $scope.file25
 				}
 			})
 			.then(function(data, status, headers, config){

@@ -52,6 +52,7 @@ app.post('/upload', function(req, res){
 		res.sendStatus(500);
 	else{
 		yt.upload();
+        res.sendStatus(200);
 	}
 });
 
