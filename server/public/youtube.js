@@ -112,7 +112,7 @@ class Youtube{
 
             setInterval(function () {
                 try {
-                    log.info(`${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: ` + thisYT.output);
+                    log.info(`${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: ` + thisYT.file);
                 }catch(err){
                     log.error(err.stack);
                     console.error(err.message);
