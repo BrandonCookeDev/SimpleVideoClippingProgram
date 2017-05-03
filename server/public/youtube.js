@@ -1,5 +1,6 @@
 'use strict';
 
+let prettyBytes     = require('pretty-bytes')
 let youtube         = require('youtube-api');
 let opn             = require('opn');
 let fs              = require('fs');
@@ -27,7 +28,7 @@ class Youtube{
     }
 
     static isAuthenticated(){
-        return (Youtube.oauth && Youtube.code && Youtube.token);
+        return !(!Youtube.oauth && !Youtube.code && !Youtube.token);
     }
 
     static sendOAuth(){
@@ -58,6 +59,7 @@ class Youtube{
 
                 log.info("Got the tokens.");
                 thisYT.oauth.setCredentials(tokens);
+                Youtube.token = tokens;
                 resolve(tokens)
             });
         });
@@ -71,44 +73,54 @@ class Youtube{
         let fileLog = {
             level: 'debug',
             filename: './uploadLogs/' + details.title + new Date(),
-            handleExceptions: trues, //bool
+            handleExceptions: true, //bool
             json: false,  //bool
             colorize: true //bool
         };
         log.add(log.transports.File, fileLog);
 
-        let req = youtube.videos.insert({
-            resource: {
-                // Video title and description
-                snippet: {
-                    title: details.title,
-                    description: details.description,
-                    tags: details.tags
+        try {
+            let req = youtube.videos.insert({
+                resource: {
+                    // Video title and description
+                    snippet: {
+                        title: details.title,
+                        description: details.description,
+                        tags: details.tags
+                    },
+                    // I don't want to spam my subscribers
+                    status: {
+                        privacyStatus: "public"
+                    }
                 },
-                // I don't want to spam my subscribers
-                status: {
-                    privacyStatus: "public"
+                // This is for the callback function
+                part: "snippet,status",
+
+                // Create the readable stream to upload the video
+                media: {
+                    body: fs.createReadStream(this.file)
                 }
-            },
-            // This is for the callback function
-            part: "snippet,status",
+            }, (err, data) => {
+                if (err) {
+                    log.error(err.stack);
+                }
 
-            // Create the readable stream to upload the video
-            media: {
-                body: fs.createReadStream(this.file)
-            }
-        }, (err, data) => {
-            if(err){
-                log.error(err.stack);
-            }
+                log.info("Done.");
+                process.exit();
+            });
 
-            log.info("Done.");
-            process.exit();
-        });
-
-        setInterval(function () {
-            log.info(`${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: ` + this.file);
-        }, 250);
+            setInterval(function () {
+                try {
+                    log.info(`${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: ` + this.file);
+                }catch(err){
+                    log.error(err.stack);
+                    console.error(err.message);
+                }
+            }, 250);
+        }catch(err){
+            log.error(err.stack);
+            console.error(err.message);
+        }
     }
 
     createVideoDetails(){
@@ -145,7 +157,7 @@ class Youtube{
 
         let deets = {
             title: title,
-            details: details,
+            description: description,
             tags: tags
         };
 

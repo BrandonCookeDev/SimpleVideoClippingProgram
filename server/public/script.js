@@ -27,11 +27,13 @@ myApp.controller('homeCtrl', function($scope, $http){
 	};
 	
 	$scope.sanitizeObjectInputs = function(){
+		/*
 		$scope.file.tournamentName = $scope.file.tournamentName.replace(" ", "_");
 		$scope.file.round = $scope.file.round.replace(" ", "_");
 		$scope.file.player1.replace(" ", "_");
 		$scope.file.player2.replace(" ", "_");		
-		$scope.file.ssString = 
+		*/
+		$scope.file.ssString =
 			$scope.file.ss.Hour + ':' + $scope.file.ss.Minute + ':' + $scope.file.ss.Second;
 		$scope.file.endString = 
 			$scope.file.end.Hour + ':' + $scope.file.end.Minute + ':' + $scope.file.end.Second;
@@ -66,6 +68,18 @@ myApp.controller('homeCtrl', function($scope, $http){
 			//SUCCESS
 			console.log('create clip was successful');
 			messageArea.innerHTML = 'Creating ' + $scope.file.outputFileName + '...' + 'Created!';
+
+			$http({
+				method: 'POST',
+				url: '/upload',
+				data:{
+					file: $scope.file
+				}
+			})
+			.then(function(data, status, headers, config){
+                console.log('clip being uploaded: ' + err);
+                messageArea.innerHTML = 'Clip Being Uploaded...';
+			})
 		}, 
 		(err, status, headers, config) => {
 			//FAILURE

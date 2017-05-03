@@ -46,7 +46,7 @@ app.post('/upload', function(req, res){
 	var p2name = file.player2;
 	var bracket = file.bracketUrl;
 
-	var yt = new Youtube(file, p1name, p2name, tournament, round, bracket);
+	var yt = new Youtube(input, p1name, p2name, tournament, round, bracket);
 	if(!Youtube.isAuthenticated())
 		res.sendStatus(500);
 	else{
