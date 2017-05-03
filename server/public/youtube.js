@@ -39,7 +39,7 @@ class Youtube{
             , redirect_url: Youtube.CREDENTIALS.web.redirect_uris[0]
         });
 
-        opn(this.oauth.generateAuthUrl({
+        opn(Youtube.oauth.generateAuthUrl({
             access_type: "offline"
             , scope: ["https://www.googleapis.com/auth/youtube.upload"]
         }));
@@ -58,7 +58,7 @@ class Youtube{
                 }
 
                 log.info("Got the tokens.");
-                thisYT.oauth.setCredentials(tokens);
+                Youtube.oauth.setCredentials(tokens);
                 Youtube.token = tokens;
                 resolve(tokens)
             });
@@ -79,6 +79,7 @@ class Youtube{
         };
         log.add(log.transports.File, fileLog);
 
+        let thisYT =  this;
         try {
             let req = youtube.videos.insert({
                 resource: {
@@ -111,7 +112,7 @@ class Youtube{
 
             setInterval(function () {
                 try {
-                    log.info(`${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: ` + this.file);
+                    log.info(`${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: ` + thisYT.output);
                 }catch(err){
                     log.error(err.stack);
                     console.error(err.message);
