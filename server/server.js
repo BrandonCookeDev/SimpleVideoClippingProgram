@@ -1,3 +1,9 @@
+var Youtube	= require('./public/youtube');
+var youtube = new Youtube();
+Youtube.init();
+
+var log = require('winston');
+
 var express = require('express');
 var fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
@@ -21,6 +27,35 @@ app.get('/home', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
+app.get('/youtube/auth', function(req, res){
+	Youtube.oauth();
+});
+
+app.get('/youtube/authenticate', function(req, res){
+	var code = req.query.code;
+	var verify = Youtube.verifyOAuth(code);
+});
+
+app.post('/upload', function(req, res){
+	var file = req.body.file;
+
+	var input = file.inputFile;
+	var tournament = file.tournamentName;
+	var round = file.round;
+	var p1name = file.player1;
+	var p2name = file.player2;
+	var output = file.outputFileName;
+	var bracket = file.bracketUrl;
+
+	var yt = new Youtube(output, p1name, p2name, tournament, round, bracket);
+	if(!Youtube.isAuthenticated())
+		res.sendStatus(500);
+	else{
+		yt.upload();
+        res.sendStatus(200);
+	}
+});
+
 app.post('/createClip', function(req, res){
 	var cmd = req.body.command;
 	console.log('  [SERVER] FFMPEG running command');
@@ -31,7 +66,7 @@ app.post('/createClip', function(req, res){
 	res.sendStatus(200);
 });
 
-app.post('/uploadFile', function(req, res){
+app.post('/uploadLocalFile', function(req, res){
 	var file = req.files;
 	console.log(file);
 	
@@ -61,8 +96,8 @@ app.post('/uploadFile', function(req, res){
 
 var server = app.listen(portGl, function () {
 
-  var host = server.address().address
-  var port = server.address().port
+  var host = server.address().address;
+  var port = server.address().port;
 
   console.log("Example app listening at http://%s:%s", host, port)
 
