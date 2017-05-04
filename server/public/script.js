@@ -2,6 +2,7 @@ var myApp = angular.module('myApp', []);
 
 myApp.controller('homeCtrl', function($scope, $http){
 	$scope.test = 'Hello World';
+	$scope.uploadTF = true;
 	$scope.file = {
 		inputFile : '',
 		ss : {
@@ -51,41 +52,26 @@ myApp.controller('homeCtrl', function($scope, $http){
 	};
 	
 	$scope.submitClipRequest = function(){
+		var file = angular.copy($scope.file);
+        var uploadTF = angular.copy($scope.uploadTF);
+
 		$scope.sanitizeObjectInputs();
-		var cmd = createClipWithObject($scope.file);
+		var cmd = createClipWithObject(file);
 		
 		var messageArea = document.getElementById('statusMessage');
-		messageArea.innerHTML = 'Creating ' + $scope.file.outputFileName + '...';
-		$http({
-			method: 'POST',
-			url: '/createClip',
-			data:{
-				command: cmd
-			}
-		})
-		.then( 
-		function(data, status, headers, config){
-			//SUCCESS
-			console.log('create clip was successful');
-			messageArea.innerHTML = 'Creating ' + $scope.file.outputFileName + '...' + 'Created!';
+		messageArea.innerHTML = 'Creating ' + file.outputFileName + '...';
 
-			$http({
-				method: 'POST',
-				url: '/upload',
-				data:{
-					file: $scope.file
-				}
+		var cmdPromise	  = clip(file, cmd);
+		var uploadPromise = upload(uploadTF, file);
+
+		cmdPromise.then(function(){
+			uploadPromise.then(data=>{
+				console.log('upload successful')
+			}).catch(err=>{
+				console.err(err);
 			})
-			.then(function(data, status, headers, config){
-                messageArea.innerHTML = data;
-			})
-		}, 
-		(err, status, headers, config) => {
-			//FAILURE
-			console.log('create clip call failed: ' + err);
-			messageArea.innerHTML = 'Creating clip failed...';
 		});
-		
+
 		window.setTimeout($scope.$apply(), 15000);
 	};
 	  
@@ -117,8 +103,64 @@ myApp.controller('homeCtrl', function($scope, $http){
 
 		}
 	});
+
+	function clip(file, cmd){
+		return new Promise(function(resolve, reject){
+			try{
+                var messageArea = document.getElementById('statusMessage');
+                messageArea.innerHTML = 'Creating ' + file.outputFileName + '...';
+
+                $http({
+                    method: 'POST',
+                    url: '/createClip',
+                    data:{
+                        command: cmd
+                    }
+                })
+				.then(
+					function(data, status, headers, config){
+						//SUCCESS
+						console.log('create clip was successful');
+						messageArea.innerHTML = 'Creating ' + file.outputFileName + '...' + 'Created!';
+					},
+					(err, status, headers, config) => {
+						//FAILURE
+						console.log('create clip call failed: ' + err);
+						messageArea.innerHTML = 'Creating clip failed...';
+					});
+			}catch(err){
+				console.error(err);
+				reject(err.message);
+			}
+		})
+	}
 	
-	
+	function upload(uploadTF, file){
+		return new Promise(function(resolve, reject){
+			try {
+                if (uploadTF) {
+                    $http({
+                        method: 'POST',
+                        url: '/upload',
+                        data: {
+                            file: file
+                        }
+                    })
+					.then(function (data, status, headers, config) {
+						resolve(data);
+					})
+                }
+                else{
+                	console.error('upload switch is false');
+                	reject('Upload Switch is false')
+				}
+            }catch(err){
+				console.error(err.stack);
+				reject(err.message)
+			}
+		})
+	}
+
 	/*
 	Dropzone.options.myDropzone({
 	  init: function() {
