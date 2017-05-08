@@ -2,6 +2,7 @@ var myApp = angular.module('myApp', []);
 
 myApp.controller('homeCtrl', function($scope, $http){
     var id = 0;
+    var statuses = ['notCreated', 'creating', 'created', 'uploading', 'uploaded', 'failed'];
 
 	$scope.test = 'Hello World';
 	$scope.uploadTF = true;
@@ -75,7 +76,8 @@ myApp.controller('homeCtrl', function($scope, $http){
 		var element = {
 			file: file,
 			createdTF: false,
-			uploadedTF: false
+			uploadedTF: false,
+			status: 'notCreated'
 		};
 		$scope.videoQueue.push(element);
 
@@ -156,6 +158,20 @@ myApp.controller('homeCtrl', function($scope, $http){
 			return video.file.id == videoToDelete.file.id;
 		})
 	};
+
+	function notifyFailed(attemptedCreeatedVideo){
+        var filtered = _.filter($scope.videoQueue, function(video){
+            return video.file.id == createdVideo.file.id;
+        });
+        if(!filtered.length)
+            throw new Error('No element in the current video queue found');
+        else if(filtered.length && filtered.length == 1){
+            var newElement = filtered[0];
+            newElement.createdTF = true;
+            _.extend(_.findWhere($scope.videoQueue, {outputFileName: newElement.outputFileName}), newElement);
+        }
+        else throw new Error('More than one element found');
+	}
 
 	function notifyCreated(createdVideo){
 		var filtered = _.filter($scope.videoQueue, function(video){
