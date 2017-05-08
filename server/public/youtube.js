@@ -1,10 +1,13 @@
 'use strict';
 
+let _               = require('lodash');
 let prettyBytes     = require('pretty-bytes')
 let youtube         = require('youtube-api');
 let opn             = require('opn');
 let fs              = require('fs');
 let log             = require('winston');
+
+let uploadLock = null;
 
 class Youtube{
     static init(){
@@ -12,6 +15,7 @@ class Youtube{
         Youtube.oauth = null;
         Youtube.code  = null;
         Youtube.token = null;
+        Youtube.queue = [];
 
         Youtube.sendOAuth();
     }
@@ -86,46 +90,56 @@ class Youtube{
         let thisYT =  this;
         return new Promise(function(resolve, reject) {
             try{
-                let req = youtube.videos.insert({
-                    resource: {
-                        // Video title and description
-                        snippet: {
-                            title: details.title,
-                            description: details.description,
-                            tags: details.tags
+                if(_.findIndex(Youtube.queue,
+                        {p1name: thisYT.p1name,
+                         p2name: thisYT.p2name,
+                         round: thisYT.round,
+                         tournament: thisYT.tournament,
+                         file: thisYT.file}) < 0) {
+                    Youtube.queue.push(thisYT);
+                    let req = youtube.videos.insert({
+                        resource: {
+                            // Video title and description
+                            snippet: {
+                                title: details.title,
+                                description: details.description,
+                                tags: details.tags
+                            },
+                            // I don't want to spam my subscribers
+                            status: {
+                                privacyStatus: "public"
+                            }
                         },
-                        // I don't want to spam my subscribers
-                        status: {
-                            privacyStatus: "public"
+                        // This is for the callback function
+                        part: "snippet,status",
+
+                        // Create the readable stream to upload the video
+                        media: {
+                            body: fs.createReadStream(thisYT.file)
                         }
-                    },
-                    // This is for the callback function
-                    part: "snippet,status",
+                    }, (err, data) => {
+                        if (err) {
+                            log.error(err.stack);
+                            reject(err.message);
+                        }
 
-                    // Create the readable stream to upload the video
-                    media: {
-                        body: fs.createReadStream(thisYT.file)
-                    }
-                }, (err, data) => {
-                    if (err) {
-                        log.error(err.stack);
-                    }
+                        clearInterval(logUpload);
+                        log.info("Done.");
+                        Youtube.queue = _.reject(Youtube.queue, thisYT);
+                        resolve();
+                    });
 
-                    clearInterval(logUpload);
-                    log.info("Done.");
-                    resolve(true);
-                });
-
-                var logUpload = setInterval(function () {
-                    try {
-                        let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
-                        log.info( uploaded + thisYT.file);
-                    } catch (err) {
-                        log.error(err.stack);
-                        console.error(err.message);
-                        reject(err.message);
-                    }
-                }, 250);
+                    var logUpload = setInterval(function () {
+                        try {
+                            let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
+                            log.info(uploaded + thisYT.file);
+                        } catch (err) {
+                            log.error(err.stack);
+                            console.error(err.message);
+                            reject(err.message);
+                        }
+                    }, 250);
+                }
             }catch(err){
                 log.error(err.stack);
                 console.error(err.message);

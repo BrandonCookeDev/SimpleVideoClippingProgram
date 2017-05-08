@@ -56,8 +56,15 @@ app.post('/upload', function(req, res){
 	if(!Youtube.isAuthenticated())
 		res.sendStatus(500);
 	else{
-		yt.upload();
-        res.sendStatus(200);
+		yt.upload()
+			.then(function(){
+                res.sendStatus(200);
+                res.end();
+			})
+			.catch(function(err){
+				log.error(err.stack);
+				res.sendStatus(500);
+			})
 	}
 });
 
@@ -84,26 +91,18 @@ app.post('/createClip', function(req, res){
             log.error(err.stack);
             res.sendStatus(500);
         }
-		else if(stderr) {
-            log.error(stderr);
-            res.sendStatus(500);
-        }
 		else {
 			log.info('complete');
 			log.info(stdout);
-			res(200);
+			res.sendStatus(200);
         }
 
 	});
 
-
-
-    /*
+/*
 	var process = new ffmpeg(path.join(filedir, filename));
 	process.then(video => {
 		video.setVideoFormat('mp4');
-		video.setVideoCodec('copy');
-		video.setAudioCodec('copy');
 		video.setVideoStartTime(startTime);
 		video.setVideoDuration(duration);
 		video.save(output, function(err, file){
@@ -124,7 +123,7 @@ app.post('/createClip', function(req, res){
 			log.error(err);
         }
 	})
-	*/
+*/
 
 });
 

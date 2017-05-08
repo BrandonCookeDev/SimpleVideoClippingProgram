@@ -119,7 +119,8 @@ myApp.controller('homeCtrl', function($scope, $http){
 				function(data, status, headers, config){
 					//SUCCESS
 					// TODO
-					notifyCreated(file);
+					if(data.status == 200)
+						notifyCreated(file);
 				},
 				(err, status, headers, config) => {
 					//FAILURE
@@ -142,7 +143,8 @@ myApp.controller('homeCtrl', function($scope, $http){
 				}
 			})
 			.then(function (data, status, headers, config) {
-				notifyUploaded(video);
+				if(data.status == 200)
+					notifyUploaded(video);
 			})
 		}catch(err){
 			console.error(err.stack);
