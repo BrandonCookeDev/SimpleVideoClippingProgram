@@ -44,7 +44,7 @@ app.get('/youtube/authenticate', function(req, res){
 app.post('/upload', function(req, res){
 	var file = req.body.file;
 
-	var input = file.inputFile;
+	var input = file.inputFileName;
 	var tournament = file.tournamentName;
 	var round = file.round;
 	var p1name = file.player1;
@@ -78,21 +78,24 @@ app.post('/createClip', function(req, res){
 
 	var cmd =
 		'ffmpeg -i ' + filepath + ' -ss ' + startTime + ' -t ' + duration + ' -acodec copy -vcodec copy ' + output;
-    res.sendStatus(200);
 
-	/*
 	exec(cmd, function(err, stdout, stderr){
-		if(err)
-			log.error(err.stack);
-		else if(stderr)
-			log.error(stderr);
+		if(err) {
+            log.error(err.stack);
+            res.sendStatus(500);
+        }
+		else if(stderr) {
+            log.error(stderr);
+            res.sendStatus(500);
+        }
 		else {
 			log.info('complete');
 			log.info(stdout);
 			res(200);
         }
+
 	});
-	*/
+
 
 
     /*

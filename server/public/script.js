@@ -74,7 +74,8 @@ myApp.controller('homeCtrl', function($scope, $http){
 
 		var element = {
 			file: file,
-			createdTF: false
+			createdTF: false,
+			uploadedTF: false
 		};
 		$scope.videoQueue.push(element);
 
@@ -131,32 +132,27 @@ myApp.controller('homeCtrl', function($scope, $http){
 		}
 	};
 	
-	$scope.upload = function(file){
+	$scope.upload = function(video){
 		try {
-			if (uploadTF) {
-				$http({
-					method: 'POST',
-					url: '/upload',
-					data: {
-						file: file
-					}
-				})
-				.then(function (data, status, headers, config) {
-					resolve(data);
-				})
-			}
-			else{
-				console.error('upload switch is false');
-				reject('Upload Switch is false')
-			}
+			$http({
+				method: 'POST',
+				url: '/upload',
+				data: {
+					file: video.file
+				}
+			})
+			.then(function (data, status, headers, config) {
+				notifyUploaded(video);
+			})
 		}catch(err){
 			console.error(err.stack);
-			reject(err.message);
 		}
 	};
 
-	$scope.delete = function(file){
-
+	$scope.delete = function(videoToDelete){
+		$scope.videoQueue = _.reject($scope.videoQueue, function(video){
+			return video.file.id == videoToDelete.file.id;
+		})
 	};
 
 	function notifyCreated(createdVideo){
@@ -171,6 +167,20 @@ myApp.controller('homeCtrl', function($scope, $http){
 			_.extend(_.findWhere($scope.videoQueue, {outputFileName: newElement.outputFileName}), newElement);
 		}
 		else throw new Error('More than one element found');
+	}
+
+	function notifyUploaded(uploadedVideo){
+        var filtered = _.filter($scope.videoQueue, function(video){
+            return video.file.id == uploadedVideo.file.id;
+        });
+        if(!filtered.length)
+            throw new Error('No element in the current video queue found');
+        else if(filtered.length && filtered.length == 1){
+            var newElement = filtered[0];
+            newElement.uploadedTF = true;
+            _.extend(_.findWhere($scope.videoQueue, {outputFileName: newElement.outputFileName}), newElement);
+        }
+        else throw new Error('More than one element found');
 	}
 
 	/*

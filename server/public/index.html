@@ -105,11 +105,12 @@
 						{{ video.file.endString }}
 					</td>
 					<td>
-						<button ng-click="clip(video)" class="btn btn-success" ng-hide="video.createdTF">Create Clip</button>
-						<button ng-click="upload(file)" class="btn btn-default" ng-show="video.createdTF">Upload Clip</button>
+						<button ng-click="clip(video)" class="btn btn-success" ng-show="!video.createdTF && !video.uploadedTF">Create Clip</button>
+						<button ng-click="upload(video)" class="btn btn-default" ng-show="video.createdTF && !video.uploadedTF" >Upload Clip</button>
+						<label ng-show="video.uploadedTF">Complete!</label>
 					</td>
 					<td>
-						<button ng-click="delete(file)" class="btn btn-danger">Delete</button>
+						<button ng-click="delete(video)" class="btn btn-danger" ng-show="!video.uploadedTF">Delete</button>
 					</td>
 				</tr>
 			</table>
