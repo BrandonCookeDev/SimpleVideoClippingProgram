@@ -78,6 +78,9 @@ app.post('/createClip', function(req, res){
 
 	var cmd =
 		'ffmpeg -i ' + filepath + ' -ss ' + startTime + ' -t ' + duration + ' -acodec copy -vcodec copy ' + output;
+    res.sendStatus(200);
+
+	/*
 	exec(cmd, function(err, stdout, stderr){
 		if(err)
 			log.error(err.stack);
@@ -89,6 +92,7 @@ app.post('/createClip', function(req, res){
 			res(200);
         }
 	});
+	*/
 
 
     /*

@@ -1,11 +1,14 @@
 var myApp = angular.module('myApp', []);
 
 myApp.controller('homeCtrl', function($scope, $http){
+    var id = 0;
+
 	$scope.test = 'Hello World';
 	$scope.uploadTF = true;
 	$scope.videoQueue = [];
 
 	$scope.file = {
+	    id: '',
 		inputFile : '',
 		inputFileName:'',
 		inputFileDirectory:'',
@@ -66,6 +69,9 @@ myApp.controller('homeCtrl', function($scope, $http){
 		//var cmdPromise	  = clip(file, cmd);
 		//var uploadPromise = upload(uploadTF, file);
 
+        file.id = id;
+        id++;
+
 		var element = {
 			file: file,
 			createdTF: false
@@ -112,7 +118,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 				function(data, status, headers, config){
 					//SUCCESS
 					// TODO
-					notifyCreated(file.outputFileName);
+					notifyCreated(file);
 				},
 				(err, status, headers, config) => {
 					//FAILURE
@@ -153,14 +159,16 @@ myApp.controller('homeCtrl', function($scope, $http){
 
 	};
 
-	function notifyCreated(thisFile){
-		var filtered = _.filter($scope.videoQueue, {outputFileName: thisFile.outputFileName});
+	function notifyCreated(createdVideo){
+		var filtered = _.filter($scope.videoQueue, function(video){
+            return video.file.id == createdVideo.file.id;
+        });
 		if(!filtered.length)
 			throw new Error('No element in the current video queue found');
 		else if(filtered.length && filtered.length == 1){
 			var newElement = filtered[0];
 			newElement.createdTF = true;
-			_.extend(_.findWhere(videoQueue, {outputFileName: newElement.outputFileName}), newElement);
+			_.extend(_.findWhere($scope.videoQueue, {outputFileName: newElement.outputFileName}), newElement);
 		}
 		else throw new Error('More than one element found');
 	}
