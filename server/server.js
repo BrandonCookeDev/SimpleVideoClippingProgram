@@ -2,12 +2,17 @@ var Youtube	= require('./public/youtube');
 var youtube = new Youtube();
 Youtube.init();
 
-var log = require('winston');
+var fs  	= require('fs');
+var path 	= require('path');
+var log 	= require('winston');
+var ffmpeg 	= require('ffmpeg');
+var moment  = require('moment');
 
 var express = require('express');
 var fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
 var clip = require('./public/clip.js');
+const exec = require('child_process').exec;
 const execSync = require('child_process').execSync;
 
 var portGl = 1337;
@@ -57,6 +62,66 @@ app.post('/upload', function(req, res){
 });
 
 app.post('/createClip', function(req, res){
+	var filedir 	= req.body.video.file.inputFileDirectory;
+	var filename 	= req.body.video.file.inputFileName;
+	var startTime 	= req.body.video.file.ssString;
+	var endTime   	= req.body.video.file.endString;
+	var tournament 	= req.body.video.file.tournamentName;
+	var round 		= req.body.video.file.round;
+	var player1 	= req.body.video.file.player1;
+	var player2		= req.body.video.file.player2;
+	var output		= req.body.video.file.outputFileName;
+
+	var filepath = path.join(filedir, filename);
+    var duration = moment.utc(moment(endTime, "HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("HH:mm:ss");
+
+
+	var cmd =
+		'ffmpeg -i ' + filepath + ' -ss ' + startTime + ' -t ' + duration + ' -acodec copy -vcodec copy ' + output;
+	exec(cmd, function(err, stdout, stderr){
+		if(err)
+			log.error(err.stack);
+		else if(stderr)
+			log.error(stderr);
+		else {
+			log.info('complete');
+			log.info(stdout);
+			res(200);
+        }
+	});
+
+
+    /*
+	var process = new ffmpeg(path.join(filedir, filename));
+	process.then(video => {
+		video.setVideoFormat('mp4');
+		video.setVideoCodec('copy');
+		video.setAudioCodec('copy');
+		video.setVideoStartTime(startTime);
+		video.setVideoDuration(duration);
+		video.save(output, function(err, file){
+			if(err)
+				log.error(err.stack);
+			else{
+				res(200)
+			}
+		})
+	},
+	function(err){
+		if(err)
+			log.error(err.stack);
+	})
+	.catch(function(err){
+		if(err) {
+            log.error(err.stack);
+			log.error(err);
+        }
+	})
+	*/
+
+});
+
+app.post('/createClipV2', function(req, res){
 	var cmd = req.body.command;
 	console.log('  [SERVER] FFMPEG running command');
 	console.log('--------------------------------------\n');

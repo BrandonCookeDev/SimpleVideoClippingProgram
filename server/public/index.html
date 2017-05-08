@@ -12,12 +12,16 @@
 				<h2>Clip Creator Form</h2>
 				<table>
 				<tr>
+					<td>Input Video Directory</td>
+					<td><input type='text' id='inputFile' ng-model='file.inputFileDirectory' placeholder="absolute path here"/></td>
+				</tr>
+				<tr>
 					<td>Input Video File</td>
 					<td>
-					<input type='text' id='inputFile' ng-model='file.inputFile'/>
 					<!--
-					<input type='file' id='inputFile' ng-model='file.inputFile' onchange="angular.element(this).scope().fileNameChanged(this)"/>
+					<input type='text' id='inputFile' ng-model='file.inputFile'/>
 					-->
+					<input type='file' fileread="file.inputFile"/>
 					</td>
 				</tr>
 				<tr>
@@ -70,26 +74,53 @@
 				</tr>
 					-->
 				</table>
-				<input type="checkbox" value="Upload To Youtube" id="uploadYTCheckbox" ng-model="uploadTF" ng-init="checked=true"/> Upload to Youtube <br/>
-				<input type='submit' value='Generate Clip' id='submitClipForm' /> <p id='statusMessage' ng-model='statusMessage' ></p>
+				<input type='submit' value='Generate Clip' id='submitClipForm' />
 			</form>
 			<br />
 			<hr />
-			<!--
-			<form id="my-dropzone" action="/parseFile" class="dropzone">
-			-->
-			<div id="myDropzone">
-				Drop File Here for Automation
-			</div>
+			<table class="clipCreationTable">
+				<tr>
+					<th>OutputFile</th>
+					<th>Tournament</th>
+					<th>Round</th>
+					<th>StartTime</th>
+					<th>EndTime</th>
+					<th>Action</th>
+					<th>Delete</th>
+				</tr>
+				<tr ng-repeat="video in videoQueue">
+					<td>
+						{{ video.file.outputFileName }}
+					</td>
+					<td>
+						{{ video.file.tournamentName }}
+					</td>
+					<td>
+						{{ video.file.round }}
+					</td>
+					<td>
+						{{ video.file.ssString }}
+					</td>
+					<td>
+						{{ video.file.endString }}
+					</td>
+					<td>
+						<button ng-click="clip(video)" class="btn btn-success" ng-hide="video.createdTF">Create Clip</button>
+						<button ng-click="upload(file)" class="btn btn-default" ng-show="video.createdTF">Upload Clip</button>
+					</td>
+					<td>
+						<button ng-click="delete(file)" class="btn btn-danger">Delete</button>
+					</td>
+				</tr>
+			</table>
 			</form>
 		</div>
-		
-			
 		
 		<script src='node_modules/angular/angular.min.js'></script>
 		<script src='node_modules/jquery/dist/jquery.min.js'></script>
 		<script src='node_modules/bootstrap/dist/js/bootstrap.min.js'></script>
 		<script src='node_modules/dropzone/dist/dropzone.js'></script>
+		<script src="lib/underscore.js"></script>
 		<script src='clip.js'></script>
 		<script src='script.js'></script>
 	</body>

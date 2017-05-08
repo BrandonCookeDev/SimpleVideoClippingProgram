@@ -3,8 +3,12 @@ var myApp = angular.module('myApp', []);
 myApp.controller('homeCtrl', function($scope, $http){
 	$scope.test = 'Hello World';
 	$scope.uploadTF = true;
+	$scope.videoQueue = [];
+
 	$scope.file = {
 		inputFile : '',
+		inputFileName:'',
+		inputFileDirectory:'',
 		ss : {
 			Hour : 0,
 			Minute : 0,
@@ -55,15 +59,20 @@ myApp.controller('homeCtrl', function($scope, $http){
 		var file = angular.copy($scope.file);
         var uploadTF = angular.copy($scope.uploadTF);
 
+        file.inputFileName = $scope.file.inputFile.name;
 		$scope.sanitizeObjectInputs();
-		var cmd = createClipWithObject(file);
-		
-		var messageArea = document.getElementById('statusMessage');
-		messageArea.innerHTML = 'Creating ' + file.outputFileName + '...';
 
-		var cmdPromise	  = clip(file, cmd);
-		var uploadPromise = upload(uploadTF, file);
 
+		//var cmdPromise	  = clip(file, cmd);
+		//var uploadPromise = upload(uploadTF, file);
+
+		var element = {
+			file: file,
+			createdTF: false
+		};
+		$scope.videoQueue.push(element);
+
+		/*
 		cmdPromise.then(function(){
 			uploadPromise.then(data=>{
 				console.log('upload successful')
@@ -71,8 +80,9 @@ myApp.controller('homeCtrl', function($scope, $http){
 				console.err(err);
 			})
 		});
+		*/
 
-		window.setTimeout($scope.$apply(), 15000);
+		//window.setTimeout($scope.$apply(), 15000);
 	};
 	  
 	$scope.sendFile = function(file){
@@ -85,80 +95,74 @@ myApp.controller('homeCtrl', function($scope, $http){
 			}
 		);
 	};
-	
-	var myDropzone = new Dropzone("div#myDropzone", { 
-		url: "/uploadFile",
-		autoProcessQueue : true,
-		dictDefaultMessage: "Drop files or click here to upload a new DICOM series ...",
-		init : function() {
 
-			myDropzone = this;
 
-			//Restore initial message when queue has been completed
-			this.on("drop", function(event) {
-				console.log(myDropzone.files);            
-				var target = myDropzone.files[0];
-				
-			});
+	$scope.clip = function(file){
 
-		}
-	});
+		try{
 
-	function clip(file, cmd){
-		return new Promise(function(resolve, reject){
-			try{
-                var messageArea = document.getElementById('statusMessage');
-                messageArea.innerHTML = 'Creating ' + file.outputFileName + '...';
-
-                $http({
-                    method: 'POST',
-                    url: '/createClip',
-                    data:{
-                        command: cmd
-                    }
-                })
-				.then(
-					function(data, status, headers, config){
-						//SUCCESS
-						console.log('create clip was successful');
-						messageArea.innerHTML = 'Creating ' + file.outputFileName + '...' + 'Created!';
-					},
-					(err, status, headers, config) => {
-						//FAILURE
-						console.log('create clip call failed: ' + err);
-						messageArea.innerHTML = 'Creating clip failed...';
-					});
-			}catch(err){
-				console.error(err);
-				reject(err.message);
-			}
-		})
-	}
-	
-	function upload(uploadTF, file){
-		return new Promise(function(resolve, reject){
-			try {
-                if (uploadTF) {
-                    $http({
-                        method: 'POST',
-                        url: '/upload',
-                        data: {
-                            file: file
-                        }
-                    })
-					.then(function (data, status, headers, config) {
-						resolve(data);
-					})
-                }
-                else{
-                	console.error('upload switch is false');
-                	reject('Upload Switch is false')
+			$http({
+				method: 'POST',
+				url: '/createClip',
+				data:{
+					video: file
 				}
-            }catch(err){
-				console.error(err.stack);
-				reject(err.message)
+			})
+			.then(
+				function(data, status, headers, config){
+					//SUCCESS
+					// TODO
+					notifyCreated(file.outputFileName);
+				},
+				(err, status, headers, config) => {
+					//FAILURE
+					// TODO
+
+				});
+		}catch(err){
+			console.error(err);
+			reject(err.message);
+		}
+	};
+	
+	$scope.upload = function(file){
+		try {
+			if (uploadTF) {
+				$http({
+					method: 'POST',
+					url: '/upload',
+					data: {
+						file: file
+					}
+				})
+				.then(function (data, status, headers, config) {
+					resolve(data);
+				})
 			}
-		})
+			else{
+				console.error('upload switch is false');
+				reject('Upload Switch is false')
+			}
+		}catch(err){
+			console.error(err.stack);
+			reject(err.message);
+		}
+	};
+
+	$scope.delete = function(file){
+
+	};
+
+	function notifyCreated(thisFile){
+		var filtered = _.filter($scope.videoQueue, {outputFileName: thisFile.outputFileName});
+		if(!filtered.length)
+			throw new Error('No element in the current video queue found');
+		else if(filtered.length && filtered.length == 1){
+			var newElement = filtered[0];
+			newElement.createdTF = true;
+			_.extend(_.findWhere(videoQueue, {outputFileName: newElement.outputFileName}), newElement);
+		}
+		else throw new Error('More than one element found');
 	}
 
 	/*
@@ -174,7 +178,22 @@ myApp.controller('homeCtrl', function($scope, $http){
 //var myDropzone = Dropzone.forElement("div#my-awesome-dropzone");
 //myDropzone.on("error", function(file, message) { alert(message); });
 
-
+myApp.directive("fileread", [function () {
+    return {
+        scope: {
+            fileread: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                scope.$apply(function () {
+                    scope.fileread = changeEvent.target.files[0];
+                    // or all selected files:
+                    // scope.fileread = changeEvent.target.files;
+                });
+            });
+        }
+    }
+}]);
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
