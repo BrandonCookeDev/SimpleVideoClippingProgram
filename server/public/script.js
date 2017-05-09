@@ -107,9 +107,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 
 
 	$scope.clip = function(file){
-
 		try{
-
 			$http({
 				method: 'POST',
 				url: '/createClip',
@@ -158,6 +156,16 @@ myApp.controller('homeCtrl', function($scope, $http){
 			return video.file.id == videoToDelete.file.id;
 		})
 	};
+
+	$scope.loadToForm = function(videoToLoad){
+		$scope.file = videoToLoad.file;
+	};
+
+	function setStatus(status, video){
+		if(statuses.indexOf(status) >= 0)
+			throw new Error('Status \'' + status + '\' is not valid. \nValid Statuses: ', statuses);
+		video.status = status;
+	}
 
 	function notifyFailed(attemptedCreeatedVideo){
         var filtered = _.filter($scope.videoQueue, function(video){

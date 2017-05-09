@@ -87,6 +87,7 @@
 					<th>Player2</th>
 					<th>StartTime</th>
 					<th>EndTime</th>
+					<th>Load Above</th>
 					<th>Action</th>
 					<th>Delete</th>
 				</tr>
@@ -101,16 +102,19 @@
 						{{ video.file.round }}
 					</td>
 					<td>
-						{{ video.player1 }}
+						{{ video.file.player1 }}
 					</td>
 					<td>
-						{{ video.player2 }}
+						{{ video.file.player2 }}
 					</td>
 					<td>
 						{{ video.file.ssString }}
 					</td>
 					<td>
 						{{ video.file.endString }}
+					</td>
+					<td>
+						<button ng-click="loadToForm(video)" class="btn btn-default">Load</button>
 					</td>
 					<td>
 						<button ng-click="clip(video)" class="btn btn-success" ng-show="!video.createdTF && !video.uploadedTF">Create Clip</button>
