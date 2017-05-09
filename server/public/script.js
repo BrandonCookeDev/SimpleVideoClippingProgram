@@ -106,13 +106,13 @@ myApp.controller('homeCtrl', function($scope, $http){
 	};
 
 
-	$scope.clip = function(file){
+	$scope.clip = function(video){
 		try{
 			$http({
 				method: 'POST',
 				url: '/createClip',
 				data:{
-					video: file
+					video: video
 				}
 			})
 			.then(
@@ -120,13 +120,14 @@ myApp.controller('homeCtrl', function($scope, $http){
 					//SUCCESS
 					// TODO
 					if(data.status == 200)
-						notifyCreated(file);
+						setStatus('created', video)
 				},
 				(err, status, headers, config) => {
 					//FAILURE
-					// TODO
+					setStatus('failed', video);
 
 				});
+			setStatus('creating', video);
 		}catch(err){
 			console.error(err);
 			reject(err.message);
@@ -144,8 +145,14 @@ myApp.controller('homeCtrl', function($scope, $http){
 			})
 			.then(function (data, status, headers, config) {
 				if(data.status == 200)
-					notifyUploaded(video);
-			})
+					setStatus('uploaded', video);
+			}).catch(function(err){
+				if(err)
+					log.error(err.stack);
+				setStatus('failed', video);
+			});
+
+			setStatus('uploading', video);
 		}catch(err){
 			console.error(err.stack);
 		}

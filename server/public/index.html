@@ -117,12 +117,14 @@
 						<button ng-click="loadToForm(video)" class="btn btn-default">Load</button>
 					</td>
 					<td>
-						<button ng-click="clip(video)" class="btn btn-success" ng-show="!video.createdTF && !video.uploadedTF">Create Clip</button>
-						<button ng-click="upload(video)" class="btn btn-default" ng-show="video.createdTF && !video.uploadedTF" >Upload Clip</button>
-						<label ng-show="video.uploadedTF">Complete!</label>
+						<button ng-click="clip(video)" class="btn btn-success" ng-show="video.status == 'notCreated'">Create Clip</button>
+						<label ng-show="video.status == 'creating'">Creating clip...</label>
+						<button ng-click="upload(video)" class="btn btn-default" ng-show="video.status == 'created'" >Upload Clip</button>
+						<label ng-show="video.status == 'uploading'">Uploading...</label>
+						<label ng-show="video.status == 'uploaded'">Complete!</label>
 					</td>
 					<td>
-						<button ng-click="delete(video)" class="btn btn-danger" ng-show="!video.uploadedTF">Delete</button>
+						<button ng-click="delete(video)" class="btn btn-danger">Delete</button>
 					</td>
 				</tr>
 			</table>
