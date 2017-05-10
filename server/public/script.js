@@ -124,7 +124,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 				},
 				(err, status, headers, config) => {
 					//FAILURE
-					setStatus('failed', video);
+					setStatus('notCreated', video);
 
 				});
 			setStatus('creating', video);
@@ -149,7 +149,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 			}).catch(function(err){
 				if(err)
 					log.error(err.stack);
-				setStatus('failed', video);
+				setStatus('created', video);
 			});
 
 			setStatus('uploading', video);
@@ -169,7 +169,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 	};
 
 	function setStatus(status, video){
-		if(statuses.indexOf(status) >= 0)
+		if(statuses.indexOf(status) < 0)
 			throw new Error('Status \'' + status + '\' is not valid. \nValid Statuses: ', statuses);
 		video.status = status;
 	}
