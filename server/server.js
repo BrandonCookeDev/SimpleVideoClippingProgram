@@ -7,6 +7,7 @@ var path 	= require('path');
 var log 	= require('winston');
 var ffmpeg 	= require('ffmpeg');
 var moment  = require('moment');
+var cache	= require('./public/cache').instance;
 
 var express = require('express');
 var fileUpload = require('express-fileupload');
@@ -70,7 +71,7 @@ app.post('/upload', function(req, res){
 
 app.post('/createClip', function(req, res){
 	var filedir 	= req.body.video.file.inputFileDirectory;
-	var filename 	= req.body.video.file.inputFileName;
+	var filename 	= req.body.video.file.inputFile;
 	var startTime 	= req.body.video.file.ssString;
 	var endTime   	= req.body.video.file.endString;
 	var tournament 	= req.body.video.file.tournamentName;
@@ -135,6 +136,40 @@ app.post('/createClipV2', function(req, res){
 	console.log('--------------------------------------\n');
 	execSync(cmd);
 	res.sendStatus(200);
+});
+
+app.get('/cache', function(req, res){
+	cache.getClipCache()
+		.then(function(clipsArr){
+			res.send(clipsArr)
+		})
+		.catch(function(err){
+			log.error(err.stack);
+			res.sendStatus(500);
+			res.end();
+		})
+});
+
+app.post('/cache', function(req, res){
+	var video = {
+        filedir 	: req.body.video.file.inputFileDirectory,
+		filename 	: req.body.video.file.inputFile,
+		startTime 	: req.body.video.file.ssString,
+		endTime   	: req.body.video.file.endString,
+		tournament 	: req.body.video.file.tournamentName,
+		round 		: req.body.video.file.round,
+		player1 	: req.body.video.file.player1,
+		player2		: req.body.video.file.player2,
+		output		: req.body.video.file.outputFileName
+	};
+
+	cache.cacheClipInfo(video);
+});
+
+app.get('/uploadStatus', function(req, res){
+    var id = req.query.id;
+    var uploadStatus = getUploadStatus(id);
+    res.send(uploadStatus);
 });
 
 app.post('/uploadLocalFile', function(req, res){

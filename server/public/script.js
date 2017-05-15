@@ -27,13 +27,24 @@ myApp.controller('homeCtrl', function($scope, $http){
 		endString : '',
 		tournamentName: '',
 		round : '',
-		player1 : '',
-		player2 : '',
+		player1 : {
+	    	smashtag: '',
+			character: '',
+			color: ''
+		},
+		player2 : {
+            smashtag: '',
+            character: '',
+            color: ''
+		},
 		yesAudio : true,
 		noAudio : false,
 		outputFileName : '',
-		bracketUrl: ''
+		bracketUrl: '',
+		fileSize:''
 	};
+
+	$scope.characterData = characterData; //FROM characterData.js
 	
 	$scope.sanitizeObjectInputs = function(){
 		/*
@@ -168,6 +179,15 @@ myApp.controller('homeCtrl', function($scope, $http){
 		$scope.file = videoToLoad.file;
 	};
 
+	$scope.getColors = function(character, player){
+		var char = _.filter(characterData, {Name: character});
+		return char.colors;
+	};
+
+	$scope.reset = function(videoToReset){
+		setStatus('notCreated', videoToReset);
+	};
+
 	function setStatus(status, video){
 		if(statuses.indexOf(status) < 0)
 			throw new Error('Status \'' + status + '\' is not valid. \nValid Statuses: ', statuses);
@@ -251,3 +271,7 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
+$http.get('/cache')
+	.then(function(clipsArr){
+		$scope.videoQueue = clipsArr;
+	})

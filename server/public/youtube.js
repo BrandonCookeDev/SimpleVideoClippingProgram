@@ -7,6 +7,8 @@ let opn             = require('opn');
 let fs              = require('fs');
 let log             = require('winston');
 
+let UploadManager   = require('./uploadManager');
+
 let uploadLock = null;
 
 class Youtube{
@@ -16,6 +18,8 @@ class Youtube{
         Youtube.code  = null;
         Youtube.token = null;
         Youtube.queue = [];
+
+        //UploadManager.init();
 
         Youtube.sendOAuth();
     }
@@ -129,6 +133,9 @@ class Youtube{
                         resolve();
                     });
 
+                    //TODO put video in UploadManager
+
+
                     var logUpload = setInterval(function () {
                         try {
                             let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
@@ -187,6 +194,10 @@ class Youtube{
         };
 
         return deets;
+    }
+
+    getStatus(id){
+        var vid = _.findWhere(Youtube.queue, {id: id})
     }
 }
 
