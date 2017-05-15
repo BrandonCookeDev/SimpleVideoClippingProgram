@@ -94,13 +94,8 @@ class Youtube{
         let thisYT =  this;
         return new Promise(function(resolve, reject) {
             try{
-                if(_.findIndex(Youtube.queue,
-                        {p1name: thisYT.p1name,
-                         p2name: thisYT.p2name,
-                         round: thisYT.round,
-                         tournament: thisYT.tournament,
-                         file: thisYT.file}) < 0) {
-                    Youtube.queue.push(thisYT);
+                if(thisYT.isInQueue()) {
+                    thisYT.addToQueue();
                     let req = youtube.videos.insert({
                         resource: {
                             // Video title and description
@@ -136,6 +131,7 @@ class Youtube{
                     //TODO put video in UploadManager
 
                     if(!req){
+                        thisYT.removeFromQueue();
                         return reject('Youtube not connected');
                     }
 
@@ -197,6 +193,54 @@ class Youtube{
         };
 
         return deets;
+    }
+
+    addToQueue(){
+        Youtube.queue.push(this);
+    }
+
+    removeFromQueue(){
+        if(this.isInQueue(this))
+            this.queue = _.reject(Youtube.queue,
+                {p1name: this.p1name,
+                    p2name: this.p2name,
+                    round: this.round,
+                    tournament: this.tournament,
+                    file: this.file})
+
+    }
+
+    isInQueue(){
+        return _.findIndex(Youtube.queue,
+                {p1name: this.p1name,
+                    p2name: this.p2name,
+                    round: this.round,
+                    tournament: this.tournament,
+                    file: this.file}) < 0
+    }
+
+    static addToQueue(youtubeObj){
+        Youtube.queue.push(youtubeObj);
+    }
+
+    static removeFromQueue(youtubeObj){
+        if(this.isInQueue(youtubeObj))
+            this.queue = _.reject(Youtube.queue,
+                                {p1name: youtubeObj.p1name,
+                                 p2name: youtubeObj.p2name,
+                                 round: youtubeObj.round,
+                                 tournament: youtubeObj.tournament,
+                                 file: youtubeObj.file})
+
+    }
+
+    static isInQueue(youtubeObj){
+        return _.findIndex(Youtube.queue,
+                {p1name: youtubeObj.p1name,
+                 p2name: youtubeObj.p2name,
+                 round: youtubeObj.round,
+                 tournament: youtubeObj.tournament,
+                 file: youtubeObj.file}) < 0
     }
 
     getStatus(id){
