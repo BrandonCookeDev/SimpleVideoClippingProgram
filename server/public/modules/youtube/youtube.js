@@ -135,6 +135,9 @@ class Youtube{
 
                     //TODO put video in UploadManager
 
+                    if(!req){
+                        return reject('Youtube not connected');
+                    }
 
                     var logUpload = setInterval(function () {
                         try {
@@ -143,7 +146,7 @@ class Youtube{
                         } catch (err) {
                             log.error(err.stack);
                             console.error(err.message);
-                            reject(err.message);
+                            return reject(err.message);
                         }
                     }, 250);
                 }
