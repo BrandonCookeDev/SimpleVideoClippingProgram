@@ -141,6 +141,7 @@ class Youtube{
                             log.info(uploaded + thisYT.file);
                         } catch (err) {
                             log.error(err.stack);
+                            thisYT.removeFromQueue();
                             console.error(err.message);
                             return reject(err.message);
                         }
@@ -148,6 +149,7 @@ class Youtube{
                 }
             }catch(err){
                 log.error(err.stack);
+                thisYT.removeFromQueue();
                 console.error(err.message);
                 reject(err.message);
             }

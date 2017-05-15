@@ -1,3 +1,5 @@
+var cache = require('./cache').instance;
+
 module.exports = function(server){
     server.get('/cache', function(req, res){
         cache.getClipCache()
