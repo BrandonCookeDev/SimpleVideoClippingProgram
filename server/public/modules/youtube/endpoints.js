@@ -13,8 +13,14 @@ module.exports = function(server){
     });
 
     server.get('/uploadStatus', function(req, res){
-        var id = req.query.id;
-        var uploadStatus = Youtube.getUploadStatus(id);
+        var yt = new Youtube();
+        yt.tournament = req.body.tournament;
+        yt.round = req.body.round;
+        yt.player1 = req.body.player1;
+        yt.player2 = req.body.player2;
+        yt.file = req.body.file;
+
+        var uploadStatus = Youtube.getUploadStatus(yt);
         res.send(uploadStatus);
     });
 

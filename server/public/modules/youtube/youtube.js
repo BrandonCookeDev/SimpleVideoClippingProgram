@@ -32,6 +32,7 @@ class Youtube{
         this.round = round;
         this.bracket = bracket;
 
+        this.bytesUploaded = 0;
         this.oauth = null;
     }
 
@@ -134,10 +135,15 @@ class Youtube{
                         thisYT.removeFromQueue();
                         return reject('Youtube not connected');
                     }
+                    else{
+                        // TODO return the status url
+                    }
+
 
                     var logUpload = setInterval(function () {
                         try {
                             let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
+                            thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
                             log.info(uploaded + thisYT.file);
                         } catch (err) {
                             log.error(err.stack);
@@ -221,6 +227,16 @@ class Youtube{
                     file: this.file}) < 0
     }
 
+    getUploadStatus(){
+        let vid = _.findWhere(Youtube.queue,
+            {p1name: this.p1name,
+                p2name: this.p2name,
+                round: this.round,
+                tournament: this.tournament,
+                file: this.file});
+        return vid.bytesUploaded;
+    }
+
     static addToQueue(youtubeObj){
         Youtube.queue.push(youtubeObj);
     }
@@ -245,8 +261,14 @@ class Youtube{
                  file: youtubeObj.file}) < 0
     }
 
-    getStatus(id){
-        var vid = _.findWhere(Youtube.queue, {id: id})
+    static getUploadStatus(youtubeObj){
+        let vid = _.findWhere(Youtube.queue,
+            {p1name: youtubeObj.p1name,
+             p2name: youtubeObj.p2name,
+             round: youtubeObj.round,
+             tournament: youtubeObj.tournament,
+             file: youtubeObj.file});
+        return vid.bytesUploaded;
     }
 }
 
