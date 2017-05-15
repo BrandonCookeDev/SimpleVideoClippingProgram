@@ -1,4 +1,4 @@
-var Youtube	= require('./public/youtube');
+var Youtube	= require('./public/modules/youtube/youtube');
 var youtube = new Youtube();
 Youtube.init();
 
@@ -7,12 +7,12 @@ var path 	= require('path');
 var log 	= require('winston');
 var ffmpeg 	= require('ffmpeg');
 var moment  = require('moment');
-var cache	= require('./public/cache').instance;
+var cache	= require('./public/modules/cache/cache').instance;
 
 var express = require('express');
 var fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
-var clip = require('./public/clip.js');
+var clip = require('./public/modules/clip/clip.js');
 const exec = require('child_process').exec;
 const execSync = require('child_process').execSync;
 
@@ -25,48 +25,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(fileUpload());
 
+/** ADD MDOULAR ENDPOINTS **/
+require('./public/modules/youtube/endpoints')(app);
+require('./public/modules/cache/endpoints')(app);
+require('./public/modules/clip/endpoints')(app);
+
 app.get('/', function (req, res) {
    res.send('Hello World');
 });
 
 app.get('/home', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
-});
-
-app.get('/youtube/auth', function(req, res){
-	Youtube.oauth();
-});
-
-app.get('/youtube/authenticate', function(req, res){
-	var code = req.query.code;
-	var verify = Youtube.verifyOAuth(code);
-});
-
-app.post('/upload', function(req, res){
-	var file = req.body.file;
-
-	var input = file.inputFileName;
-	var tournament = file.tournamentName;
-	var round = file.round;
-	var p1name = file.player1;
-	var p2name = file.player2;
-	var output = file.outputFileName;
-	var bracket = file.bracketUrl;
-
-	var yt = new Youtube(output, p1name, p2name, tournament, round, bracket);
-	if(!Youtube.isAuthenticated())
-		res.sendStatus(500);
-	else{
-		yt.upload()
-			.then(function(){
-                res.sendStatus(200);
-                res.end();
-			})
-			.catch(function(err){
-				log.error(err.stack);
-				res.sendStatus(500);
-			})
-	}
 });
 
 app.post('/createClip', function(req, res){
@@ -136,40 +105,6 @@ app.post('/createClipV2', function(req, res){
 	console.log('--------------------------------------\n');
 	execSync(cmd);
 	res.sendStatus(200);
-});
-
-app.get('/cache', function(req, res){
-	cache.getClipCache()
-		.then(function(clipsArr){
-			res.send(clipsArr)
-		})
-		.catch(function(err){
-			log.error(err.stack);
-			res.sendStatus(500);
-			res.end();
-		})
-});
-
-app.post('/cache', function(req, res){
-	var video = {
-        filedir 	: req.body.video.file.inputFileDirectory,
-		filename 	: req.body.video.file.inputFile,
-		startTime 	: req.body.video.file.ssString,
-		endTime   	: req.body.video.file.endString,
-		tournament 	: req.body.video.file.tournamentName,
-		round 		: req.body.video.file.round,
-		player1 	: req.body.video.file.player1,
-		player2		: req.body.video.file.player2,
-		output		: req.body.video.file.outputFileName
-	};
-
-	cache.cacheClipInfo(video);
-});
-
-app.get('/uploadStatus', function(req, res){
-    var id = req.query.id;
-    var uploadStatus = getUploadStatus(id);
-    res.send(uploadStatus);
 });
 
 app.post('/uploadLocalFile', function(req, res){

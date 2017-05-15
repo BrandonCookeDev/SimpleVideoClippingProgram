@@ -243,6 +243,14 @@ myApp.controller('homeCtrl', function($scope, $http){
 	  }
 	});	
 	*/
+
+    $http.get('/cache')
+        .then(function(clipsArr){
+            $scope.videoQueue = clipsArr;
+        })
+        .catch(function(err){
+            console.warn('Cache is empty');
+        });
 });
 
 // Add Dropzone into page for automation file drop.
@@ -271,7 +279,3 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
-$http.get('/cache')
-	.then(function(clipsArr){
-		$scope.videoQueue = clipsArr;
-	})

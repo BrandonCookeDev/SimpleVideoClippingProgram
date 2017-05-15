@@ -156,7 +156,7 @@ class Youtube{
     }
 
     createVideoDetails(){
-        let title = this.tournament + ' - ' + this.round + ' - ' + this.p1name + ' vs ' + this.p2name;
+        let title = this.tournament + ' - ' + this.p1name + ' vs ' + this.p2name + ' - ' + this.round;
         let description = this.tournament + '! View tournament info and brackets at ' + this.bracket +
             '\n\n' +
             'Watch live and follow us at: \n'  +
