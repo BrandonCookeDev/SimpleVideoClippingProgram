@@ -2,6 +2,7 @@ var Youtube	= require('./public/modules/youtube/youtube');
 var youtube = new Youtube();
 Youtube.init();
 
+var _		= require('lodash');
 var fs  	= require('fs');
 var path 	= require('path');
 var log 	= require('winston');
@@ -78,7 +79,7 @@ app.post('/createClip', function(req, res){
         }
 	});
 
-	res.header('Location', '/clipCreationStatus/'+id);
+	res.header('Location', '/clipCreationStatus?id='+id);
 	res.status(202);
 	res.end();
 
@@ -112,7 +113,8 @@ app.post('/createClip', function(req, res){
 
 app.get('/clipCreationStatus', function(req, res){
 	var id = req.query.id;
-	res.send( ! _.findIndex(clipCreationQueue, {id:id} < 0) );
+	res.send( ! _.findIndex(clipCreationQueue, function(video)
+		{return video.id == id}) < 0 );
 });
 
 app.post('/createClipV2', function(req, res){

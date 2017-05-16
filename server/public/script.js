@@ -63,7 +63,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 		$scope.sanitizeObjectInputs();
 		
 		var name = $scope.file.tournamentName + '-' + $scope.file.round + '-' + 
-					$scope.file.player1 + '-' + $scope.file.player2 + '.mp4';
+					$scope.file.player1.smashtag + '-' + $scope.file.player2.smashtag + '.mp4';
 		$scope.file.outputFileName = name.replaceAll(" ", "");
 		$scope.file.outputFileName = $scope.file.outputFileName.replaceAll("&", "");
 		
@@ -132,9 +132,10 @@ myApp.controller('homeCtrl', function($scope, $http){
 					// TODO
 					if(data.status == 202) {
 						var checkClipStatus = setInterval(function(){
-                            $http.get(data)
-                                .then(function(isCreated, status, headers, config){
-                                    if(isCreated) {
+                            var statusUrl = data.headers('Location');
+							$http.get(statusUrl)
+                                .then(function(response){
+                                    if(response.data) {
                                         setStatus('created', video);
                                         clearInterval(checkClipStatus)
                                     }
@@ -260,7 +261,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 	  }
 	});	
 	*/
-
+/*
     $http.get('/cache')
         .then(function(clipsArr){
             $scope.videoQueue = clipsArr;
@@ -268,6 +269,7 @@ myApp.controller('homeCtrl', function($scope, $http){
         .catch(function(err){
             console.warn('Cache is empty');
         });
+*/
 });
 
 // Add Dropzone into page for automation file drop.
