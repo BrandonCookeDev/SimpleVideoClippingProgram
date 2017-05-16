@@ -226,6 +226,10 @@ myApp.controller('homeCtrl', function($scope, $http){
         else throw new Error('More than one element found');
 	}
 
+	$scope.switchToUpload = function(video){
+		setStatus('created', video);
+	}
+
 	function notifyCreated(createdVideo){
 		var filtered = _.filter($scope.videoQueue, function(video){
             return video.file.id == createdVideo.file.id;

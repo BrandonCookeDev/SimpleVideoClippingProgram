@@ -170,8 +170,12 @@
 						</td>
 						<td>
 							<button ng-click="clip(video)" class="btn btn-success" ng-show="video.status == 'notCreated'">Create Clip</button>
+							<button ng-show="video.status == 'notCreated'" ng-click="switchToUpload(video)"><p>Switch to Upload</p></button>
+
 							<label ng-show="video.status == 'creating'">Creating clip...</label>
 							<button ng-click="upload(video)" class="btn btn-upload" ng-show="video.status == 'created'" >Upload Clip</button>
+							<button ng-show="video.status == 'created'" ng-click="reset(video)"><p>Switch to Create</p></button>
+
 							<label ng-show="video.status == 'uploading'">Uploading...</label>
 							<label ng-show="video.status == 'uploaded'">Complete!</label>
 						</td>

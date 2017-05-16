@@ -30,8 +30,8 @@ module.exports = function(server){
         var input 		= file.inputFileName;
         var tournament 	= file.tournamentName;
         var round 		= file.round;
-        var p1name 		= file.player1;
-        var p2name 		= file.player2;
+        var p1name 		= file.player1.smashtag;
+        var p2name 		= file.player2.smashtag;
         var output 		= file.outputFileName;
         var bracket 	= file.bracketUrl;
 
