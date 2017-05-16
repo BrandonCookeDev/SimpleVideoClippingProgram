@@ -113,8 +113,10 @@ app.post('/createClip', function(req, res){
 
 app.get('/clipCreationStatus', function(req, res){
 	var id = req.query.id;
-	res.send( ! _.findIndex(clipCreationQueue, function(video)
-		{return video.id == id}) < 0 );
+	var isQueued = _.findIndex(clipCreationQueue, function(video)
+        {return video.id == id}) >= 0; //IS IN THE QUEUE THEN IT IS NOT COMPLETE
+	var isComplete = !isQueued
+	res.send(isComplete);
 });
 
 app.post('/createClipV2', function(req, res){
