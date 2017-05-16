@@ -1,5 +1,6 @@
 'use strict';
 
+let log     = require('winston');
 let Youtube = require('./youtube');
 
 module.exports = function(server){
@@ -13,10 +14,8 @@ module.exports = function(server){
     });
 
     server.get('/uploadStatus', function(req, res){
-        var yt = new Youtube();
-        yt.id = req.query.id;
-
-        var uploadStatus = Youtube.getUploadStatus(yt);
+        var id = req.query.id;
+        var uploadStatus = Youtube.getUploadStatus(id);
         res.send(uploadStatus);
     });
 
@@ -37,11 +36,13 @@ module.exports = function(server){
         else{
             yt.upload()
                 .then(function(){
-                    res.sendStatus(200);
+                    var statusUrl = '/uploadStatus?id='+yt.id;
+                    res.header('Location', statusUrl);
+                    res.status(202);
                     res.end();
                 })
                 .catch(function(err){
-                    log.error(err.stack);
+                    log.error(err);
                     res.sendStatus(500);
                 })
         }

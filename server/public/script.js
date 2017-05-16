@@ -176,18 +176,20 @@ myApp.controller('homeCtrl', function($scope, $http){
 			.then(function (data, status, headers, config) {
 				if(data.status == 202){
 					var statusUrl = data.headers('Location');
-					$http.get(statusUrl)
-						.then(function(response){
-							var complete = response.data.complete;
-							if(!complete)
-								video.file.bytesUploaded = response.data.bytesUploaded;
-							else
-								setStatus('uploaded', video);
-						})
-						.catch(function(err){
-							if(err)console.error(err);
-							setStatus('created', video);
-						})
+					setInterval(function(){
+						$http.get(statusUrl)
+							.then(function(response){
+								var complete = response.data.complete;
+								if(!complete)
+									video.file.bytesUploaded = response.data.bytesUploaded;
+								else
+									setStatus('uploaded', video);
+							})
+							.catch(function(err){
+								if(err)console.error(err);
+								setStatus('created', video);
+							})
+                	}, 2000);
 				}
 				else{
                     setStatus('created', video);
@@ -200,6 +202,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 
 			setStatus('uploading', video);
 		}catch(err){
+			setStatus('created', video);
 			console.error(err.stack);
 		}
 	};

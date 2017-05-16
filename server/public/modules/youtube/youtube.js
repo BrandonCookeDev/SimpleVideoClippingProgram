@@ -31,7 +31,7 @@ class Youtube{
         this.round = round;
         this.bracket = bracket;
 
-        this.id = _.join("::", [tournament, round, p1name, p2name]);
+        this.id = _.join([tournament, round, p1name, p2name], "::");
         this.bytesUploaded = 0;
         this.oauth = null;
     }
@@ -138,7 +138,13 @@ class Youtube{
                     var logUpload = setInterval(function () {
                         try {
                             let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
+
+                            //UPDATE ELEMENT IN THE VIDEO QUEUE WITH NEW BYTES DISPATCHED
                             thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
+                            /*
+                            _.extend(_.findc(Youtube.queue,
+                                function(yt){return yt.id == thisYT.id}), thisYT);
+                            */
                             log.info(uploaded + thisYT.file);
                         } catch (err) {
                             log.error(err.stack);
@@ -148,7 +154,7 @@ class Youtube{
                         }
                     }, 250);
 
-
+                    resolve();
                 }
             }catch(err){
                 thisYT.removeFromQueue();
@@ -226,12 +232,8 @@ class Youtube{
     }
 
     getUploadStatus(){
-        let vid = _.findWhere(Youtube.queue,
-            {p1name: this.p1name,
-                p2name: this.p2name,
-                round: this.round,
-                tournament: this.tournament,
-                file: this.file});
+        let vid = _.find(Youtube.queue,
+            function(video){return video.id == this.id});
         return vid.bytesUploaded;
     }
 
@@ -260,7 +262,7 @@ class Youtube{
     }
 
     static getUploadStatus(id){
-        let vid = _.findWhere(Youtube.queue, function(video){ return video.id == id });
+        let vid = _.find(Youtube.queue, function(video){ return video.id == id });
 
         var data;
         if(vid) {
