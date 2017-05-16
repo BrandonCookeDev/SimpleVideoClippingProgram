@@ -130,15 +130,10 @@ class Youtube{
                     });
 
                     //TODO put video in UploadManager
-
                     if(!req){
                         thisYT.removeFromQueue();
                         return reject('Youtube not connected');
                     }
-                    else{
-                        // TODO return the status url
-                    }
-
 
                     var logUpload = setInterval(function () {
                         try {
@@ -152,10 +147,13 @@ class Youtube{
                             return reject(err.message);
                         }
                     }, 250);
+
+
                 }
             }catch(err){
-                log.error(err.stack);
                 thisYT.removeFromQueue();
+
+                log.error(err.stack);
                 console.error(err.message);
                 reject(err.message);
             }

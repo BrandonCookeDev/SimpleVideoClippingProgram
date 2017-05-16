@@ -130,8 +130,25 @@ myApp.controller('homeCtrl', function($scope, $http){
 				function(data, status, headers, config){
 					//SUCCESS
 					// TODO
-					if(data.status == 200)
-						setStatus('created', video)
+					if(data.status == 202) {
+						var checkClipStatus = setInterval(function(){
+                            $http.get(data)
+                                .then(function(isCreated, status, headers, config){
+                                    if(isCreated) {
+                                        setStatus('created', video);
+                                        clearInterval(checkClipStatus)
+                                    }
+                                })
+								.catch(function(err){
+									console.error(err);
+									setStatus('notCreated', video);
+									clearInterval(checkClipStatus);
+								})
+						}, 10000);
+                    }
+                    else{
+						setStatus('notCreated', video);
+					}
 				},
 				(err, status, headers, config) => {
 					//FAILURE

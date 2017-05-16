@@ -25,6 +25,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(fileUpload());
 
+var i = 0;
+var clipCreationQueue = [];
+
 /** ADD MDOULAR ENDPOINTS **/
 require('./public/modules/youtube/endpoints')(app);
 require('./public/modules/cache/endpoints')(app);
@@ -56,18 +59,28 @@ app.post('/createClip', function(req, res){
 	var cmd =
 		'ffmpeg -i ' + filepath + ' -ss ' + startTime + ' -t ' + duration + ' -acodec copy -vcodec copy ' + output;
 
+	var id = i++;
+	var vid = {
+		name: output,
+		id: id
+	};
+	clipCreationQueue.push(vid);
+
 	exec(cmd, function(err, stdout, stderr){
+		clipCreationQueue = _.reject(clipCreationQueue, {id:id});
+
 		if(err) {
             log.error(err.stack);
-            res.sendStatus(500);
         }
 		else {
-			log.info('complete');
+			log.info('complete: ' + cmd);
 			log.info(stdout);
-			res.sendStatus(200);
         }
-
 	});
+
+	res.header('Location', '/clipCreationStatus/'+id);
+	res.status(202);
+	res.end();
 
 /*
 	var process = new ffmpeg(path.join(filedir, filename));
@@ -95,6 +108,11 @@ app.post('/createClip', function(req, res){
 	})
 */
 
+});
+
+app.get('/clipCreationStatus', function(req, res){
+	var id = req.query.id;
+	res.send( ! _.findIndex(clipCreationQueue, {id:id} < 0) );
 });
 
 app.post('/createClipV2', function(req, res){
