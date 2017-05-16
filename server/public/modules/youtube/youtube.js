@@ -142,9 +142,9 @@ class Youtube{
                             //UPDATE ELEMENT IN THE VIDEO QUEUE WITH NEW BYTES DISPATCHED
                             thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
                             /*
-                            _.extend(_.findc(Youtube.queue,
-                                function(yt){return yt.id == thisYT.id}), thisYT);
-                            */
+                             _.extend(_.findc(Youtube.queue,
+                             function(yt){return yt.id == thisYT.id}), thisYT);
+                             */
                             log.info(uploaded + thisYT.file);
                         } catch (err) {
                             log.error(err.stack);

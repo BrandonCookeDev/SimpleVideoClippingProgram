@@ -42,7 +42,8 @@ myApp.controller('homeCtrl', function($scope, $http){
 		outputFileName : '',
 		bracketUrl: '',
 		fileSize:'',
-		bytesUploaded:''
+		bytesUploaded:'',
+		percentUploaded:0
 	};
 
 	$scope.characterData = characterData; //FROM characterData.js
@@ -176,17 +177,20 @@ myApp.controller('homeCtrl', function($scope, $http){
 			.then(function (data, status, headers, config) {
 				if(data.status == 202){
 					var statusUrl = data.headers('Location');
-					setInterval(function(){
+					var uploadStatusLoop = setInterval(function(){
 						$http.get(statusUrl)
 							.then(function(response){
 								var complete = response.data.complete;
 								if(!complete)
 									video.file.bytesUploaded = response.data.bytesUploaded;
-								else
-									setStatus('uploaded', video);
+								else {
+                                 	clearInterval(uploadStatusLoop);
+                                    setStatus('uploaded', video);
+                                }
 							})
 							.catch(function(err){
 								if(err)console.error(err);
+                                clearInterval(uploadStatusLoop);
 								setStatus('created', video);
 							})
                 	}, 2000);
