@@ -266,7 +266,21 @@ class Youtube{
              round: youtubeObj.round,
              tournament: youtubeObj.tournament,
              file: youtubeObj.file});
-        return vid.bytesUploaded;
+
+        var data;
+        if(vid) {
+            data = {
+                complete: false,
+                bytesUploaded: vid.bytesUploaded
+            }
+        }
+        else{
+            data = {
+                complete: true,
+                bytesUploaded: vid.bytesUploaded
+            }
+        }
+        return data;
     }
 }
 

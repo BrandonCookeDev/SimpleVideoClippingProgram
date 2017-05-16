@@ -41,7 +41,8 @@ myApp.controller('homeCtrl', function($scope, $http){
 		noAudio : false,
 		outputFileName : '',
 		bracketUrl: '',
-		fileSize:''
+		fileSize:'',
+		bytesUploaded:''
 	};
 
 	$scope.characterData = characterData; //FROM characterData.js
@@ -173,8 +174,24 @@ myApp.controller('homeCtrl', function($scope, $http){
 				}
 			})
 			.then(function (data, status, headers, config) {
-				if(data.status == 200)
-					setStatus('uploaded', video);
+				if(data.status == 202){
+					var statusUrl = data.headers('Location');
+					$http.get(statusUrl)
+						.then(function(response){
+							var complete = response.data.complete;
+							if(!complete)
+								video.file.bytesUploaded = response.data.bytesUploaded;
+							else
+								setStatus('uploaded', video);
+						})
+						.catch(function(err){
+							if(err)console.error(err);
+							setStatus('created', video);
+						})
+				}
+				else{
+                    setStatus('created', video);
+				}
 			}).catch(function(err){
 				if(err)
 					log.error(err.stack);
