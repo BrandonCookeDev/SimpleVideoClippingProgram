@@ -8,7 +8,6 @@ let fs              = require('fs');
 let log             = require('winston');
 
 let UploadManager   = require('./uploadManager');
-
 let uploadLock = null;
 
 class Youtube{
@@ -32,6 +31,7 @@ class Youtube{
         this.round = round;
         this.bracket = bracket;
 
+        this.id = _.join("::", [tournament, round, p1name, p2name]);
         this.bytesUploaded = 0;
         this.oauth = null;
     }
@@ -259,13 +259,8 @@ class Youtube{
                  file: youtubeObj.file}) < 0
     }
 
-    static getUploadStatus(youtubeObj){
-        let vid = _.findWhere(Youtube.queue,
-            {p1name: youtubeObj.p1name,
-             p2name: youtubeObj.p2name,
-             round: youtubeObj.round,
-             tournament: youtubeObj.tournament,
-             file: youtubeObj.file});
+    static getUploadStatus(id){
+        let vid = _.findWhere(Youtube.queue, function(video){ return video.id == id });
 
         var data;
         if(vid) {
