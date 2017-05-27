@@ -8,89 +8,195 @@
 	</head>
 	<body>
 		<div ng-controller='homeCtrl' id='formDiv' class='container'>
+			<h2>Clip Creator Form</h2>
 			<form class='pure-form' ng-submit='submitClipRequest()' ng-model='inputFile' id='clipForm'>
-				<h2>Clip Creator Form</h2>
-				<table>
-				<tr>
-					<td>Input Video File</td>
-					<td>
-					<input type='text' id='inputFile' ng-model='file.inputFile'/>
-					<!--
-					<input type='file' id='inputFile' ng-model='file.inputFile' onchange="angular.element(this).scope().fileNameChanged(this)"/>
-					-->
-					</td>
-				</tr>
-				<tr>
-					<td>Start Time</td>
-					<td>  	 
-						 <input type='number' max='99' min='00' ng-model='file.ss.Hour' size='2'/>
-						 <input type='number' max='99' min='00' ng-model='file.ss.Minute' size='2'/>
-						 <input type='number' max='99' min='00' ng-model='file.ss.Second' size='2'/> 			 
-					</td>
-				</tr>
-				<tr>
-					<td>End Time</td>
-					<td>		 
-						 <input type='number' max='99' min='00' ng-model='file.end.Hour' size='2'/> 
-						 <input type='number' max='99' min='00' ng-model='file.end.Minute' size='2'/>
-						 <input type='number' max='99' min='00' ng-model='file.end.Second' size='2'/> 
-					</td>
-				</tr>
-				<tr>
-					<td>Tournament Name</td>
-					<td>  <input type='text' id='tournamentName' ng-model='file.tournamentName' /> </td>
-				</tr>
-				<tr>
-					<td>Bracket Url</td>
-					<td><input type='text' id='bracketUrl' ng-model='file.bracketUrl' /></td>
-				</tr>
-				<tr>
-					<td>Round</td>
-					<td><input type='text' id='roundText' ng-model='file.round' /></td>
-				</tr>
-				<tr>
-					<td>Player1</td>
-					<td><input type='text' id='player1Text' ng-model='file.player1' /></td>
-				</tr>
-				<tr>
-					<td>Player2</td>
-					<td><input type='text' id='player2Text' ng-model='file.player2' /></td>
-				</tr>
-				<tr>
-					<td>Output File Name</td>
-					<td><input type='text' id='outputFileName' ng-model='file.outputFileName' style='{width: 200px;}'/> </br>
-						<input type='button' ng-click='changeOutputFilename()' value='Generate Name' />
-					</td>
-				</tr>
-					<!--
-				<tr>
-					<td>Audio Off?</td>
-					<td><input type='checkbox' ng-false-value='file.yesAudio' ng-true-value='file.noAudio'
-										id='audioCheckbox' /></td>
-				</tr>
-					-->
-				</table>
-				<input type="checkbox" value="Upload To Youtube" id="uploadYTCheckbox" ng-model="uploadTF" ng-init="checked=true"/> Upload to Youtube <br/>
-				<input type='submit' value='Generate Clip' id='submitClipForm' /> <p id='statusMessage' ng-model='statusMessage' ></p>
+				<div class="col-lg-2"></div>
+				<div class="col-lg-4 col-md-6 col-sm-12">
+					<table>
+						<tr>
+							<td>Input Video Directory</td>
+							<td><input type='text' id='inputFileDir' ng-model='file.inputFileDirectory' placeholder="absolute path here" required/></td>
+						</tr>
+						<tr>
+							<td>Input Video File</td>
+							<td>
+
+								<input type='text' id='inputFile' ng-model='file.inputFile'/>
+							<!--
+							<input type='file' fileread="file.inputFile" required/>
+							-->
+							</td>
+						</tr>
+						<tr>
+							<td>Output Directory</td>
+							<td><input type="text" id="outputFileDirectory" ng-model="file.outputFileDirectory" required/> </td>
+						</tr>
+						<tr>
+							<td>Tournament Name</td>
+							<td>  <input type='text' id='tournamentName' ng-model='file.tournamentName' required/> </td>
+						</tr>
+						<tr>
+							<td>Bracket Url</td>
+							<td><input type='text' id='bracketUrl' ng-model='file.bracketUrl'/></td>
+						</tr>
+					</table>
+				</div>
+				<div class="col-lg-4 col-md-6 col-sm-12">
+					<table>
+						<tr>
+							<td>Start Time</td>
+							<td>
+								 <input type='number' max='99' min='00' ng-model='file.ss.Hour' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.ss.Minute' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.ss.Second' size='2' required/>
+							</td>
+						</tr>
+						<tr>
+							<td>End Time</td>
+							<td>
+								 <input type='number' max='99' min='00' ng-model='file.end.Hour' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.end.Minute' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.end.Second' size='2' required/>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Round</td>
+							<td><input type='text' id='roundText' ng-model='file.round' required/></td>
+						</tr>
+						<tr>
+							<td>Player1</td><td>
+							<table>
+								<tr>
+									<td>Smashtag</td>
+									<td><input type='text' id='player1Text' ng-model='file.player1.smashtag' required/></td>
+								</tr>
+								<tr>
+									<td>Character</td>
+									<td><select ng-options="c.Name for c in characterData"
+												ng-change="getColors(file.player1.character)" id='player1Character'
+												ng-model='file.player1.character' /></td>
+								</tr>
+								<tr>
+									<td>Color</td>
+									<td><select ng-options="color for color in getColors(file.player2.character)" id='player1Color' ng-model='file.player1.color' /></td>
+								</tr>
+							</table>
+						</td>
+						</tr>
+						<tr>
+							<td>Player2</td>
+							<td>
+								<table>
+									<tr>
+										<td>Smashtag</td>
+										<td><input type='text' id='player2Text' ng-model='file.player2.smashtag' required/></td>
+									</tr>
+									<tr>
+										<td>Character</td>
+										<td><select ng-options="character.Name for character in characterData"
+													ng-change="getColors(file.player2.character)" id='player2Character'
+												 	ng-model='file.player2.character' /></td>
+									</tr>
+									<tr>
+										<td>Color</td>
+										<td><select ng-options="color for color in " id='player2Color' ng-model='file.player2.color' /></td>
+									</tr>
+								</table>
+							</td>
+
+						</tr>
+						<tr>
+							<td>Output File Name</td>
+							<td><input type='text' id='outputFileName' ng-model='file.outputFileName' style='{width: 200px;}'/> </br>
+								<input type='button' ng-click='changeOutputFilename()' value='Generate Name' />
+							</td>
+							<input type='submit' value='Generate Clip' class="btn btn-success" id='submitClipForm' />
+						</tr>
+
+					</table>
+				</div>
+				<div class="col-lg-2"></div>
 			</form>
 			<br />
 			<hr />
-			<!--
-			<form id="my-dropzone" action="/parseFile" class="dropzone">
-			-->
-			<div id="myDropzone">
-				Drop File Here for Automation
+			<div class="col-lg-12 col-md-12 col-sm-12">
+				<table class="clipCreationTable">
+					<tr>
+						<th>InputFile</th>
+						<th>OutputFile</th>
+						<th>Tournament</th>
+						<th>Round</th>
+						<th>Player1</th>
+						<th>Player2</th>
+						<th>StartTime</th>
+						<th>EndTime</th>
+						<th>Load Above</th>
+						<th>Action</th>
+						<th>Delete</th>
+						<th>Reset</th>
+					</tr>
+					<tr ng-repeat="video in videoQueue">
+						<td>
+							{{ video.file.inputFile }}
+						</td>
+						<td>
+							{{ video.file.outputFileName }}
+						</td>
+						<td>
+							{{ video.file.tournamentName }}
+						</td>
+						<td>
+							{{ video.file.round }}
+						</td>
+						<td>
+							{{ video.file.player1.smashtag }} <br/>
+							{{ video.file.player1.character }} <br/>
+							{{ video.file.player1.color }}
+						</td>
+						<td>
+							{{ video.file.player2.smashtag }} <br/>
+							{{ video.file.player2.character }} <br/>
+							{{ video.file.player2.color }}
+						</td>
+						<td>
+							{{ video.file.ssString }}
+						</td>
+						<td>
+							{{ video.file.endString }}
+						</td>
+						<td>
+							<button ng-click="loadToForm(video)" class="btn btn-default">Load</button>
+						</td>
+						<td>
+							<button ng-click="clip(video)" class="btn btn-success" ng-show="video.status == 'notCreated'">Create Clip</button><br/>
+							<button ng-show="video.status == 'notCreated'" ng-click="switchToUpload(video)" class="btn btn-upload"><p>Switch to Upload</p></button>
+
+							<label ng-show="video.status == 'creating'">Creating clip...</label>
+							<button ng-click="upload(video)" class="btn btn-info" ng-show="video.status == 'created'" >Upload Clip</button>
+							<button ng-show="video.status == 'created'" ng-click="reset(video)"><p>Switch to Create</p></button>
+
+							<label ng-show="video.status == 'uploading'">Uploading... <br/> {{ video.file.bytesUploaded }}</label>
+							<label ng-show="video.status == 'uploaded'">Complete!</label>
+						</td>
+						<td>
+							<button ng-click="delete(video)" class="btn btn-danger">Delete</button>
+						</td>
+						<td>
+							<button ng-click="reset(video)" class="btn btn-default">Reset</button>
+						</td>
+					</tr>
+				</table>
 			</div>
-			</form>
 		</div>
-		
-			
 		
 		<script src='node_modules/angular/angular.min.js'></script>
 		<script src='node_modules/jquery/dist/jquery.min.js'></script>
 		<script src='node_modules/bootstrap/dist/js/bootstrap.min.js'></script>
 		<script src='node_modules/dropzone/dist/dropzone.js'></script>
-		<script src='clip.js'></script>
+		<script src="lib/underscore.js"></script>
+		<script src='modules/clip/clip.js'></script>
+		<script src="characterData.js"></script>
 		<script src='script.js'></script>
 	</body>
 </html>

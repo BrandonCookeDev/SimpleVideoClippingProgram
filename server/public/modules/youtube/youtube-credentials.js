@@ -9,4 +9,4 @@ module.exports = {
         "redirect_uris": ["http://localhost:1337/youtube/authenticate"],
         "javascript_origins": ["http://localhost:1337"]
     }
-}
+};

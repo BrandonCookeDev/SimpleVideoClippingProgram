@@ -24,56 +24,56 @@ if(process.argv.length != 6){
  
 	 var startArr = startTime.split(':').reverse();
 	 var endArr = endTime.split(':').reverse();
-	 
-	 var h, m, s;
-	 var i = 0;
-	 var arr = [];
-	 var flag = false;
-	 startArr.forEach(function(element){
-		var strVal = "";
-		var val = 0;
-		
-		//CALCULATE
-		var end = parseInt(endArr[i]);
-		var start = parseInt(startArr[i]);
-		if(end < start){
-			val = end + 60 - start;
-			
-			if(flag)
-				val--;
-			flag = true;
-		}
-		else{
-			val = end - start;
-			if(flag){
-				val--;
-				flag = false;
-			}
-		}
-		
-		//VALIDATE
-		if(val < 0) val = val * -1;
-		if(val > 100) throw "VideoTimeException";
-		else if(val < 10) strVal = '0' + val.toString();
-		else strVal = val.toString();
-		
-		arr.push(strVal);
-		i++;
-	 });
-	 
-	 h = arr[2];
-	 m = arr[1];
-	 s = arr[0];
-	 
-	 var timeDiff = h + ':' + m + ':' + s;
 
-	 console.log('----------------------COMMAND-----------------------');
-	 var cmd = 'ffmpeg -i ' + input + ' -ss ' + startTime + ' -t ' + timeDiff + ' -acodec copy -vcodec copy ' + output;
-	 console.log(cmd);
-	 console.log('----------------------COMMAND-----------------------');
-	 
-	 execSync(cmd);
-	 return output;
+     var h, m, s;
+     var i = 0;
+     var arr = [];
+     var flag = false;
+     startArr.forEach(function (element) {
+         var strVal = "";
+         var val = 0;
+
+         //CALCULATE
+         var end = parseInt(endArr[i]);
+         var start = parseInt(startArr[i]);
+         if (end < start) {
+             val = end + 60 - start;
+
+             if (flag)
+                 val--;
+             flag = true;
+         }
+         else {
+             val = end - start;
+             if (flag) {
+                 val--;
+                 flag = false;
+             }
+         }
+
+         //VALIDATE
+         if (val < 0) val = val * -1;
+         if (val > 100) throw "VideoTimeException";
+         else if (val < 10) strVal = '0' + val.toString();
+         else strVal = val.toString();
+
+         arr.push(strVal);
+         i++;
+     });
+
+     h = arr[2];
+     m = arr[1];
+     s = arr[0];
+
+     var timeDiff = h + ':' + m + ':' + s;
+
+     console.log('----------------------COMMAND-----------------------');
+     var cmd = 'ffmpeg -i ' + input + ' -ss ' + startTime + ' -t ' + timeDiff + ' -acodec copy -vcodec copy ' + output;
+     console.log(cmd);
+     console.log('----------------------COMMAND-----------------------');
+
+     execSync(cmd);
+     return output;
  }
  
  function createClipWithObject(file){
@@ -135,7 +135,7 @@ if(process.argv.length != 6){
 	 
 
 	 console.log('----------------------COMMAND-----------------------');
-	 var cmd = 'ffmpeg -i ' + file.inputFile + ' -ss ' + startTime + ' -t ' + timeDiff + ' -acodec copy -vcodec copy ' + file.outputFileName;
+	 var cmd = 'ffmpeg -i ' + file.inputFileName + ' -ss ' + startTime + ' -t ' + timeDiff + ' -acodec copy -vcodec copy ' + file.outputFileName;
 	 console.log(cmd);
 	 console.log('----------------------COMMAND-----------------------');
 	 

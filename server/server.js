@@ -1,13 +1,20 @@
-var Youtube	= require('./public/youtube');
+var Youtube	= require('./public/modules/youtube/youtube');
 var youtube = new Youtube();
 Youtube.init();
 
-var log = require('winston');
+var _		= require('lodash');
+var fs  	= require('fs');
+var path 	= require('path');
+var log 	= require('winston');
+var ffmpeg 	= require('ffmpeg');
+var moment  = require('moment');
+var cache	= require('./public/modules/cache/cache').instance;
 
 var express = require('express');
 var fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
-var clip = require('./public/clip.js');
+var clip = require('./public/modules/clip/clip.js');
+const exec = require('child_process').exec;
 const execSync = require('child_process').execSync;
 
 var portGl = 1337;
@@ -19,6 +26,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(fileUpload());
 
+var i = 0;
+var clipCreationQueue = [];
+
+/** ADD MDOULAR ENDPOINTS **/
+require('./public/modules/youtube/endpoints')(app);
+require('./public/modules/cache/endpoints')(app);
+require('./public/modules/clip/endpoints')(app);
+
 app.get('/', function (req, res) {
    res.send('Hello World');
 });
@@ -27,36 +42,84 @@ app.get('/home', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/youtube/auth', function(req, res){
-	Youtube.oauth();
-});
-
-app.get('/youtube/authenticate', function(req, res){
-	var code = req.query.code;
-	var verify = Youtube.verifyOAuth(code);
-});
-
-app.post('/upload', function(req, res){
-	var file = req.body.file;
-
-	var input = file.inputFile;
-	var tournament = file.tournamentName;
-	var round = file.round;
-	var p1name = file.player1;
-	var p2name = file.player2;
-	var output = file.outputFileName;
-	var bracket = file.bracketUrl;
-
-	var yt = new Youtube(output, p1name, p2name, tournament, round, bracket);
-	if(!Youtube.isAuthenticated())
-		res.sendStatus(500);
-	else{
-		yt.upload();
-        res.sendStatus(200);
-	}
-});
-
 app.post('/createClip', function(req, res){
+	var filedir 	= req.body.video.file.inputFileDirectory;
+	var filename 	= req.body.video.file.inputFile;
+	var startTime 	= req.body.video.file.ssString;
+	var endTime   	= req.body.video.file.endString;
+	var tournament 	= req.body.video.file.tournamentName;
+	var round 		= req.body.video.file.round;
+	var player1 	= req.body.video.file.player1;
+	var player2		= req.body.video.file.player2;
+	var output		= req.body.video.file.outputFileName;
+
+	var filepath = path.join(filedir, filename);
+    var duration = moment.utc(moment(endTime, "HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("HH:mm:ss");
+
+
+	var cmd =
+		'ffmpeg -i ' + filepath + ' -ss ' + startTime + ' -t ' + duration + ' -acodec copy -vcodec copy ' + output;
+
+	var id = i++;
+	var vid = {
+		name: output,
+		id: id
+	};
+	clipCreationQueue.push(vid);
+
+	exec(cmd, function(err, stdout, stderr){
+		clipCreationQueue = _.reject(clipCreationQueue, {id:id});
+
+		if(err) {
+            log.error(err.stack);
+        }
+		else {
+			log.info('complete: ' + cmd);
+			log.info(stdout);
+        }
+	});
+
+	res.header('Location', '/clipCreationStatus?id='+id);
+	res.status(202);
+	res.end();
+
+/*
+	var process = new ffmpeg(path.join(filedir, filename));
+	process.then(video => {
+		video.setVideoFormat('mp4');
+		video.setVideoStartTime(startTime);
+		video.setVideoDuration(duration);
+		video.save(output, function(err, file){
+			if(err)
+				log.error(err.stack);
+			else{
+				res(200)
+			}
+		})
+	},
+	function(err){
+		if(err)
+			log.error(err.stack);
+	})
+	.catch(function(err){
+		if(err) {
+            log.error(err.stack);
+			log.error(err);
+        }
+	})
+*/
+
+});
+
+app.get('/clipCreationStatus', function(req, res){
+	var id = req.query.id;
+	var isQueued = _.findIndex(clipCreationQueue, function(video)
+        {return video.id == id}) >= 0; //IS IN THE QUEUE THEN IT IS NOT COMPLETE
+	var isComplete = !isQueued
+	res.send(isComplete);
+});
+
+app.post('/createClipV2', function(req, res){
 	var cmd = req.body.command;
 	console.log('  [SERVER] FFMPEG running command');
 	console.log('--------------------------------------\n');
