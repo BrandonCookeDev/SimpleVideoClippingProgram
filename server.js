@@ -1,4 +1,4 @@
-var Youtube	= require('./public/modules/youtube/youtube');
+var Youtube	= require('./server/modules/youtube/youtube');
 var youtube = new Youtube();
 Youtube.init();
 
@@ -8,12 +8,12 @@ var path 	= require('path');
 var log 	= require('winston');
 var ffmpeg 	= require('ffmpeg');
 var moment  = require('moment');
-var cache	= require('./public/modules/cache/cache').instance;
+var cache	= require('./server/modules/cache/cache').instance;
 
 var express = require('express');
 var fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
-var clip = require('./public/modules/clip/clip.js');
+var clip = require('./server/modules/clip/clip.js');
 const exec = require('child_process').exec;
 const execSync = require('child_process').execSync;
 
@@ -21,7 +21,7 @@ var portGl = 1337;
 var hostGl = '127.0.0.1';
 
 var app = express();
-app.use("/", express.static(__dirname + '/public'));
+app.use("/", express.static(path.join(__dirname,'client')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(fileUpload());
@@ -30,9 +30,9 @@ var i = 0;
 var clipCreationQueue = [];
 
 /** ADD MDOULAR ENDPOINTS **/
-require('./public/modules/youtube/endpoints')(app);
-require('./public/modules/cache/endpoints')(app);
-require('./public/modules/clip/endpoints')(app);
+require('./server/modules/youtube/endpoints')(app);
+require('./server/modules/cache/endpoints')(app);
+require('./server/modules/clip/endpoints')(app);
 
 app.get('/', function (req, res) {
    res.send('Hello World');
