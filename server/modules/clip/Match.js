@@ -1,5 +1,5 @@
 
-class MatchData{
+class Match{
     constructor(tournament, round, playerObj1, playerObj2){
         this.tournament = tournament;
         this.round      = round;
@@ -7,3 +7,5 @@ class MatchData{
         this.player2    = playerObj2; // Player.js
     }
 }
+
+module.exports = Match;

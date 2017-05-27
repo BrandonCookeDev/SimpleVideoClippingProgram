@@ -26,10 +26,10 @@ class ClipQueue{
 
         do {
             rand = Math.floor(Math.random() * (10000));
-            if(killsignals.indexOf(rand) < 0) done = true;
+            if(ClipQueue.killsignals.indexOf(rand) < 0) done = true;
         }while(!done);
 
-        killsignals.push(rand);
+        ClipQueue.killsignals.push(rand);
         return rand;
     }
 
@@ -45,3 +45,5 @@ class ClipQueue{
         })
     }
 }
+
+module.exports = ClipQueue;

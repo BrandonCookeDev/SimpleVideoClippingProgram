@@ -1,16 +1,20 @@
+var _           = require('lodash');
+var log         = require('winston');
+var path        = require('path');
+var express     = require('express');
+var router      = express.Router();
+var exec        = require('child_process').exec;
+
 var Clip        = require('./Clip');
 var ClipQueue   = require('./ClipQueue');
 var Player      = require('./Player');
 var Match       = require('./Match');
 
-ClipQueue.init();
-
-module.exports = function(server){
-
-    server.post('/createClip', function(req, res) {
+router.route('/createClip').post(function(req, res) {
+    try {
         var filedir = req.body.video.file.inputFileDirectory;
-        var filename = req.body.video.file.inputFile;
-        var outputDir = req.body.video.file.outputFileDir;
+        var filename = req.body.video.file.inputFileName;
+        var outputDir = req.body.video.file.outputFileDirectory;
         var outputFile = req.body.video.file.outputFileName;
         var inFilepath = path.join(filedir, filename);
         var outFilepath = path.join(outputDir, outputFile);
@@ -25,12 +29,12 @@ module.exports = function(server){
 
         var Player1 = new Player(player1.smashtag, player1.character, player1.color);
         var Player2 = new Player(player2.smashtag, player2.character, player2.color);
-        var Match   = new Match(tournament, round);
-        var clip    = new Clip(inFilepath, startTime, endTime, outFilepath);
+        var match = new Match(tournament, round);
+        var clip = new Clip(inFilepath, startTime, endTime, outFilepath);
 
-        var cmd      = clip.createFfmpegCommand();
-        var killsig  = ClipQueue.createKillsignalNumber();
-        var options  = {
+        var cmd = clip.createFfmpegCommand();
+        var killsig = ClipQueue.createKillsignalNumber();
+        var options = {
             killSignal: killsig
         };
 
@@ -41,7 +45,7 @@ module.exports = function(server){
                 log.error(err.stack);
             }
             else {
-                log.info('complete: ' + cmd);
+                log.info('complete: ' + queueItem.clip.input);
                 log.info(stdout);
             }
         });
@@ -53,28 +57,56 @@ module.exports = function(server){
 
         var queueItem = ClipQueue.addToQueue(clip, killsig, proc);
 
-        res.header('Location', '/clipCreationStatus?id=' + id);
+        res.header('Location', '/clipCreationStatus?id=' + queueItem.id);
         res.status(202);
         res.end();
-    });
+    }catch(err){
+        if(err){
+            log.error(err);
+            res.sendStatus(500);
+        }
+        res.status(500).send('unknown error');
+    }
+});
 
-    server.get('/clipCreationStatus', function(req, res){
+router.route('/clipCreationStatus').get( function(req, res){
+    try {
         var id = req.query.id;
-        var isQueued = _.findIndex(clipCreationQueue, function(video)
-            {return video.id == id}) >= 0; //IS IN THE QUEUE THEN IT IS NOT COMPLETE
+        //var isQueued = _.findIndex(ClipQueue.queue, function (video) {
+        //        return video.id == id
+        //    }) >= 0; //IS IN THE QUEUE THEN IT IS NOT COMPLETE
+        var isQueued = ClipQueue.getItemFromQueue(id)
         var isComplete = !isQueued;
         res.send(isComplete);
-    });
+    }catch(err){
+        if(err){
+            log.error(err);
+            return res.sendStatus(500)
+        }
+        res.status(500).send('unknown error');
+    }
+});
 
-    server.post('/killClip', function(req, res){
-        var id   = req.query.id;
+router.route('/killClip').post(function(req, res){
+    try {
+        var id = req.query.id;
         var item = ClipQueue.getItemFromQueue(id);
 
-        if(!item)
+        if (!item)
             res.status(500).send('no clip in queue');
         else {
             item.process.kill(item.killSignal);
             res.sendStatus(200);
         }
-    })
+    }catch(err){
+        if(err){
+            log.error(err);
+            return res.sendStatus(500)
+        }
+        res.status(500).send('unknown error');
+    }
+});
+
+module.exports = function(server){
+    server.use(router);
 };
