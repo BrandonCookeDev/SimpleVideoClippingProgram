@@ -8,14 +8,15 @@ var path 	= require('path');
 var log 	= require('winston');
 var ffmpeg 	= require('ffmpeg');
 var moment  = require('moment');
-var cache	= require('./server/modules/cache/cache').instance;
+const exec 		= require('child_process').exec;
+const execSync 	= require('child_process').execSync;
 
-var express = require('express');
-var fileUpload = require('express-fileupload');
-var bodyParser = require('body-parser');
-var clip = require('./server/modules/clip/clip.js');
-const exec = require('child_process').exec;
-const execSync = require('child_process').execSync;
+var express 	= require('express');
+var fileUpload 	= require('express-fileupload');
+var bodyParser 	= require('body-parser');
+
+var clip 		= require('./server/modules/clip/Clip.js');
+var cache	= require('./server/modules/cache/cache').instance;
 
 var portGl = 1337;
 var hostGl = '127.0.0.1';
@@ -42,46 +43,6 @@ app.get('/home', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
-app.post('/createClip', function(req, res){
-	var filedir 	= req.body.video.file.inputFileDirectory;
-	var filename 	= req.body.video.file.inputFile;
-	var startTime 	= req.body.video.file.ssString;
-	var endTime   	= req.body.video.file.endString;
-	var tournament 	= req.body.video.file.tournamentName;
-	var round 		= req.body.video.file.round;
-	var player1 	= req.body.video.file.player1;
-	var player2		= req.body.video.file.player2;
-	var output		= req.body.video.file.outputFileName;
-
-	var filepath = path.join(filedir, filename);
-    var duration = moment.utc(moment(endTime, "HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("HH:mm:ss");
-
-
-	var cmd =
-		'ffmpeg -i ' + filepath + ' -ss ' + startTime + ' -t ' + duration + ' -acodec copy -vcodec copy ' + output;
-
-	var id = i++;
-	var vid = {
-		name: output,
-		id: id
-	};
-	clipCreationQueue.push(vid);
-
-	exec(cmd, function(err, stdout, stderr){
-		clipCreationQueue = _.reject(clipCreationQueue, {id:id});
-
-		if(err) {
-            log.error(err.stack);
-        }
-		else {
-			log.info('complete: ' + cmd);
-			log.info(stdout);
-        }
-	});
-
-	res.header('Location', '/clipCreationStatus?id='+id);
-	res.status(202);
-	res.end();
 
 /*
 	var process = new ffmpeg(path.join(filedir, filename));
@@ -109,15 +70,7 @@ app.post('/createClip', function(req, res){
 	})
 */
 
-});
 
-app.get('/clipCreationStatus', function(req, res){
-	var id = req.query.id;
-	var isQueued = _.findIndex(clipCreationQueue, function(video)
-        {return video.id == id}) >= 0; //IS IN THE QUEUE THEN IT IS NOT COMPLETE
-	var isComplete = !isQueued
-	res.send(isComplete);
-});
 
 app.post('/createClipV2', function(req, res){
 	var cmd = req.body.command;

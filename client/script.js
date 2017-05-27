@@ -40,6 +40,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 		yesAudio : true,
 		noAudio : false,
 		outputFileName : '',
+        outputFileDirectory: '',
 		bracketUrl: '',
 		fileSize:'',
 		bytesUploaded:'',
