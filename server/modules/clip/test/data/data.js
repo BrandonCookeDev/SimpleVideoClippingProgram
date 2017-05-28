@@ -16,9 +16,9 @@ exports.testPostData = {
             end: {
                 Hour: 0,
                 Minute: 0,
-                Second: 20
+                Second: 59
             },
-            endString: '00:00:20',
+            endString: '00:00:59',
             tournamentName: 'testTourney1',
             round: 'Grand Finals',
             player1: {

@@ -16,6 +16,7 @@ let assert = chai.assert;
 let ClipQueue = require('../ClipQueue');
 let testData = require('./data/data');
 let port = testData.port;
+var hostname = 'http://localhost:' + port;
 
 describe('clip module int test', function() {
 
@@ -43,27 +44,28 @@ describe('clip module int test', function() {
         log.info('searching for clip file');
         var output = path.join(testData.testPostData.video.file.outputFileDirectory,
                                testData.testPostData.video.file.outputFileName);
-        fs.stat(output, function(err, stats){
-            if(err){
-                log.warn('nothing found');
-                log.error(err);
-                return;
-            }
+        try {
+            fs.stat(output, function (err, stats) {
+                if(err && err.message.indexOf('ENOENT: no such file'))
+                    return log.warn('File doesn\'t exist');
+                else if(err)
+                    return log.error(err);
 
-            log.info('deleting file');
 
-            fs.unlink(output, function(err){
-                if(err){
-                    log.error(err);
-                    process.exit(2);
-                }
+                log.info('deleting file');
+                fs.unlinkSync(output);
                 done();
             })
-        })
+        } catch(err){
+            if(err) {
+                log.error(err);
+                process.exit(1);
+            }
+        }
     });
 
     it('should create a clip correctly', function (done) {
-        let url = 'http://localhost:'+ port +'/createClip';
+        let url = hostname + '/createClip';
 
         wreck.post(url, { payload: testData.testPostData }, function(err, res, data){
             if(err){
@@ -73,7 +75,7 @@ describe('clip module int test', function() {
 
             var created = false;
             assert.isOk(res.headers.location);
-            var statusUrl = 'http://localhost:' + port + res.headers.location;
+            var statusUrl = hostname + res.headers.location;
 
             var status = setInterval(function(){
                 wreck.get(statusUrl, function(err, res, data){
@@ -108,6 +110,32 @@ describe('clip module int test', function() {
 
         })
 
+    });
+
+    /** this doesn't work yet **/
+    xit('should kill the clip via killsignal', function(done){
+        let url = hostname + '/createClip';
+
+        wreck.post(url, { payload: testData.testPostData }, function(err, res, data) {
+            if (err) {
+                log.error(err);
+                return assert.fail(err);
+            }
+
+            var id = res.headers.queueid;
+            var killUrl = hostname + '/killClip?id='+id;
+            wreck.get(killUrl, function(err, res){
+                if (err) {
+                    log.error(err);
+                    return assert.fail(err);
+                }
+
+
+                assert.equals(res.status, 200);
+                assert.equals(ClipQueue.queue.length, 0);
+            })
+
+        })
     })
 
 });

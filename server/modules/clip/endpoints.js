@@ -38,6 +38,9 @@ router.route('/createClip').post(function(req, res) {
             killSignal: killsig
         };
 
+        log.info('running cmd process');
+        log.debug(cmd);
+
         var proc = exec(cmd, options, function (err, stdout, stderr) {
             ClipQueue.removeFromQueue(queueItem.id);
 
@@ -51,13 +54,14 @@ router.route('/createClip').post(function(req, res) {
         });
 
         proc.on('close', (code, signal) => {
-            console.log(
-                `child process terminated due to receipt of signal ${signal}`);
+            console.warn(
+                `child process terminated due to receipt of signal ${signal}, code: ${code}`);
         });
 
         var queueItem = ClipQueue.addToQueue(clip, killsig, proc);
 
         res.header('Location', '/clipCreationStatus?id=' + queueItem.id);
+        res.header('queueId', queueItem.id);
         res.status(202);
         res.end();
     }catch(err){
@@ -75,7 +79,7 @@ router.route('/clipCreationStatus').get( function(req, res){
         //var isQueued = _.findIndex(ClipQueue.queue, function (video) {
         //        return video.id == id
         //    }) >= 0; //IS IN THE QUEUE THEN IT IS NOT COMPLETE
-        var isQueued = ClipQueue.getItemFromQueue(id)
+        var isQueued = ClipQueue.getItemFromQueue(id);
         var isComplete = !isQueued;
         res.send(isComplete);
     }catch(err){
@@ -87,7 +91,7 @@ router.route('/clipCreationStatus').get( function(req, res){
     }
 });
 
-router.route('/killClip').post(function(req, res){
+router.route('/killClip').get(function(req, res){
     try {
         var id = req.query.id;
         var item = ClipQueue.getItemFromQueue(id);
