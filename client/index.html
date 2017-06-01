@@ -9,8 +9,8 @@
 	<body>
 		<div ng-controller='homeCtrl' id='formDiv' class='container'>
 			<h2>Clip Creator Form</h2>
+			<div class="col-lg-2"></div>
 			<form class='pure-form' ng-submit='submitClipRequest()' ng-model='inputFile' id='clipForm'>
-				<div class="col-lg-2"></div>
 				<div class="col-lg-4 col-md-6 col-sm-12">
 					<table>
 						<tr>
@@ -20,11 +20,8 @@
 						<tr>
 							<td>Input Video File</td>
 							<td>
-
-								<input type='text' id='inputFile' ng-model='file.inputFile'/>
-							<!--
-							<input type='file' fileread="file.inputFile" required/>
-							-->
+								<input type='file' accept="video/*" required video-url="videoURL"/>
+								<input type='text' id='inputFile' ng-model='file.inputFile' required/>
 							</td>
 						</tr>
 						<tr>
@@ -40,6 +37,12 @@
 							<td><input type='text' id='bracketUrl' ng-model='file.bracketUrl'/></td>
 						</tr>
 					</table>
+
+					<br/>
+					<div id="videoDiv">
+						<h4>Video:</h4>
+						<video height="250" width="350"  ng-src="{{videoURL}}" id="previewVideo" controls autoplay style="object-fit:initial"></video>
+					</div>
 				</div>
 				<div class="col-lg-4 col-md-6 col-sm-12">
 					<table>
@@ -73,7 +76,7 @@
 								</tr>
 								<tr>
 									<td>Character</td>
-									<td><select ng-options="c.Name for c in characterData"
+									<td><select ng-options="c.Name for c in CharacterDataSvc.data"
 												ng-change="getColors(file.player1.character)" id='player1Character'
 												ng-model='file.player1.character' /></td>
 								</tr>
@@ -94,9 +97,9 @@
 									</tr>
 									<tr>
 										<td>Character</td>
-										<td><select ng-options="character.Name for character in characterData"
+										<td><select ng-options="character.Name for character in CharacterDataSvc.data"
 													ng-change="getColors(file.player2.character)" id='player2Character'
-												 	ng-model='file.player2.character' /></td>
+												 	ng-model='file.player2.character'  /></td>
 									</tr>
 									<tr>
 										<td>Color</td>
@@ -111,16 +114,18 @@
 							<td><input type='text' id='outputFileName' ng-model='file.outputFileName' style='{width: 200px;}'/> </br>
 								<input type='button' ng-click='changeOutputFilename()' value='Generate Name' />
 							</td>
-							<input type='submit' value='Generate Clip' class="btn btn-success" id='submitClipForm' />
 						</tr>
-
+						<tr>
+							<td>
+								<input type='submit' value='Generate Clip' class="btn btn-success" id='submitClipForm' />
+							</td>
+						</tr>
 					</table>
 				</div>
-				<div class="col-lg-2"></div>
 			</form>
+			<div class="col-lg-2"></div>
 			<br />
-			<hr />
-			<div class="col-lg-12 col-md-12 col-sm-12">
+			<div class="col-lg-12 col-md-12 col-sm-12 whiteContainer">
 				<table class="clipCreationTable">
 					<tr>
 						<th>InputFile</th>
@@ -196,7 +201,8 @@
 		<script src='./node_modules/dropzone/dist/dropzone.js'></script>
 		<script src="./lib/underscore.js"></script>
 		<script src='./lib/clip.js'></script>
-		<script src="./data/characterData.js"></script>
+
+		<script src="./webapp/services/characterData.service.js"></script>
 		<script src='./script.js'></script>
 	</body>
 </html>

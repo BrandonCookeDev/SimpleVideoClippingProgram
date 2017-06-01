@@ -1,12 +1,22 @@
-var myApp = angular.module('myApp', []);
+var myApp = angular.module('myApp', [
+	'characterData'
+]);
 
-myApp.controller('homeCtrl', function($scope, $http){
+var URL = window.URL || window.webkitURL
+
+myApp.controller('homeCtrl', function($scope, $http, CharacterDataSvc){
     var id = 0;
     var statuses = ['notCreated', 'creating', 'created', 'uploading', 'uploaded', 'failed'];
 
 	$scope.test = 'Hello World';
 	$scope.uploadTF = true;
 	$scope.videoQueue = [];
+
+	$scope.videoURL = '';
+
+	$scope.$watch('videoURL', function(){
+		console.log($scope.videoURL);
+	});
 
 	$scope.file = {
 	    id: '',
@@ -47,7 +57,15 @@ myApp.controller('homeCtrl', function($scope, $http){
 		percentUploaded:0
 	};
 
-	$scope.characterData = characterData; //FROM characterData.js
+	/*
+	$scope.videoChanged = function(event){
+		var file = event.files[0];
+		var fileURL = window.URL.createObjectURL(file);
+		$scope.videoURL = fileURL;
+	};
+	*/
+
+	$scope.characterData = CharacterDataSvc.data; //FROM characterData.js
 	
 	$scope.sanitizeObjectInputs = function(){
 		/*
@@ -134,6 +152,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 					//SUCCESS
 					// TODO
 					if(data.status == 202) {
+						video.file.id = data.headers('queueid');
 						var checkClipStatus = setInterval(function(){
                             var statusUrl = data.headers('Location');
 							$http.get(statusUrl)
@@ -211,6 +230,19 @@ myApp.controller('homeCtrl', function($scope, $http){
 			console.error(err.stack);
 		}
 	};
+
+	$scope.killClip = function(videoToKill){
+		$http({
+			method: 'GET',
+			url: '/killClip?id='+videoToKill.file.id,
+		}).then(function(success){
+			if(success){
+				setStatus('notCreated', videoToKill);
+			}
+		}).catch(function(err){
+			//TODO
+		})
+	}
 
 	$scope.delete = function(videoToDelete){
 		$scope.videoQueue = _.reject($scope.videoQueue, function(video){
@@ -305,7 +337,7 @@ myApp.controller('homeCtrl', function($scope, $http){
 //var myDropzone = Dropzone.forElement("div#my-awesome-dropzone");
 //myDropzone.on("error", function(file, message) { alert(message); });
 
-myApp.directive("fileread", [function () {
+myApp.directive("fileread", function () {
     return {
         scope: {
             fileread: "="
@@ -313,17 +345,77 @@ myApp.directive("fileread", [function () {
         link: function (scope, element, attributes) {
             element.bind("change", function (changeEvent) {
                 scope.$apply(function () {
-                    scope.fileread = changeEvent.target.files[0];
+                    scope.videoURL = changeEvent.target.files[0];
                     // or all selected files:
                     // scope.fileread = changeEvent.target.files;
                 });
             });
         }
     }
-}]);
+})
+
+myApp.directive("myStream", function(){
+    return {
+        restrict: 'A',
+        scope:{config:'='},
+        link: function(scope, element, attributes){
+            //Element is whatever element this "directive" is on
+            navigator.webkitGetUserMedia( {video:true},function (stream) {
+                element.src = $window.URL.createObjectURL(stream);
+                scope.config = {localvideo: element.src};
+                scope.$apply(); //sometimes this can be unsafe.
+            });
+        }
+    }
+});
+
+myApp.directive("videoUrl", function () {
+    return {
+    	restrict: 'A',
+        scope: {
+            videoURL: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                /*
+            	var reader = new FileReader();
+                reader.onload = function (loadEvent) {
+                    scope.$apply(function () {
+                        scope.videoURL = loadEvent.target.result;
+                    });
+                };
+                //reader.readAsDataURL(changeEvent.target.files[0]);
+                */
+
+                scope.$apply(function(){
+                    scope.$parent.videoURL = window.URL.createObjectURL(changeEvent.target.files[0]);
+				});
+            });
+        }
+    }
+});
+
+myApp.directive('colorsForCharacter', function(CharacterDataSvc){
+	return {
+		restrict: 'A',
+		scope:{
+			player: '='
+		},
+		link: function(scope, el, attr){
+			el.bind('change', function(event){
+				scope.$apply(function(){
+					var player = _.findWhere(CharacterDataSvc.data, {'name': scope.player.character});
+					scope.colors;
+				})
+			})
+		},
+		template: "<select ng-options='colors' ng-show='colors.length'>"
+	}
+});
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
+
 
