@@ -13,6 +13,11 @@
 			<form class='pure-form' ng-submit='submitClipRequest()' ng-model='inputFile' id='clipForm'>
 				<div class="col-lg-4 col-md-6 col-sm-12">
 					<table>
+						<h4>Video:</h4>
+						<div id="videoDiv">
+							<video height="225" width="350"  ng-src="{{videoURL}}" id="previewVideo"
+								   controls autoplay style="object-fit:initial" lower-volume="0.3"></video>
+						</div>
 						<tr>
 							<td>Input Video Directory</td>
 							<td><input type='text' id='inputFileDir' ng-model='file.inputFileDirectory' placeholder="absolute path here" required/></td>
@@ -37,21 +42,18 @@
 							<td><input type='text' id='bracketUrl' ng-model='file.bracketUrl'/></td>
 						</tr>
 					</table>
-
-					<br/>
-					<div id="videoDiv">
-						<h4>Video:</h4>
-						<video height="250" width="350"  ng-src="{{videoURL}}" id="previewVideo" controls autoplay style="object-fit:initial"></video>
-					</div>
 				</div>
 				<div class="col-lg-4 col-md-6 col-sm-12">
 					<table>
+						<h4>Clip</h4>
 						<tr>
 							<td>Start Time</td>
 							<td>
 								 <input type='number' max='99' min='00' ng-model='file.ss.Hour' size='2' required/>
 								 <input type='number' max='99' min='00' ng-model='file.ss.Minute' size='2' required/>
 								 <input type='number' max='99' min='00' ng-model='file.ss.Second' size='2' required/>
+								<br/><br/>
+								<input type="button" ng-click="getTimeStamp()" value="Get Current Video Timestamp" />
 							</td>
 						</tr>
 						<tr>
@@ -60,6 +62,8 @@
 								 <input type='number' max='99' min='00' ng-model='file.end.Hour' size='2' required/>
 								 <input type='number' max='99' min='00' ng-model='file.end.Minute' size='2' required/>
 								 <input type='number' max='99' min='00' ng-model='file.end.Second' size='2' required/>
+								<br/><br/>
+								<input type="button" ng-click="getTimeStamp()" value="Get Current Video Timestamp" />
 							</td>
 						</tr>
 
@@ -68,27 +72,29 @@
 							<td><input type='text' id='roundText' ng-model='file.round' required/></td>
 						</tr>
 						<tr>
-							<td>Player1</td><td>
-							<table>
-								<tr>
-									<td>Smashtag</td>
-									<td><input type='text' id='player1Text' ng-model='file.player1.smashtag' required/></td>
-								</tr>
-								<tr>
-									<td>Character</td>
-									<td><select ng-options="c.Name for c in CharacterDataSvc.data"
-												ng-change="getColors(file.player1.character)" id='player1Character'
-												ng-model='file.player1.character' /></td>
-								</tr>
-								<tr>
-									<td>Color</td>
-									<td><select ng-options="color for color in getColors(file.player2.character)" id='player1Color' ng-model='file.player1.color' /></td>
-								</tr>
-							</table>
-						</td>
+							<td>Player1 <img src="images/curlyBrace.png" height="100" width="50"/></td>
+							<td>
+								<table>
+									<tr>
+										<td>Smashtag</td>
+										<td><input type='text' id='player1Text' ng-model='file.player1.smashtag' required/></td>
+									</tr>
+									<tr>
+										<td>Character</td>
+										<td><select ng-options="c.Name for c in CharacterDataSvc.data"
+													ng-change="getColors(file.player1.character)" id='player1Character'
+													ng-model='file.player1.character' /></td>
+									</tr>
+									<tr>
+										<td>Color</td>
+										<td><select ng-options="color for color in file.player1.character.Colors"
+													id='player1Color' ng-model='file.player1.color' /></td>
+									</tr>
+								</table>
+							</td>
 						</tr>
 						<tr>
-							<td>Player2</td>
+							<td>Player2  <img src="images/curlyBrace.png" height="100" width="50"/></td>
 							<td>
 								<table>
 									<tr>
@@ -98,12 +104,13 @@
 									<tr>
 										<td>Character</td>
 										<td><select ng-options="character.Name for character in CharacterDataSvc.data"
-													ng-change="getColors(file.player2.character)" id='player2Character'
+													id='player2Character'
 												 	ng-model='file.player2.character'  /></td>
 									</tr>
 									<tr>
 										<td>Color</td>
-										<td><select ng-options="color for color in " id='player2Color' ng-model='file.player2.color' /></td>
+										<td><select ng-options="color for color in file.player2.character.Colors"
+													id='player2Color' ng-model='file.player2.color' /></td>
 									</tr>
 								</table>
 							</td>

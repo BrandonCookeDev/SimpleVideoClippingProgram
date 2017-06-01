@@ -8,6 +8,8 @@ myApp.controller('homeCtrl', function($scope, $http, CharacterDataSvc){
     var id = 0;
     var statuses = ['notCreated', 'creating', 'created', 'uploading', 'uploaded', 'failed'];
 
+    $scope.CharacterDataSvc = CharacterDataSvc;
+
 	$scope.test = 'Hello World';
 	$scope.uploadTF = true;
 	$scope.videoQueue = [];
@@ -65,7 +67,7 @@ myApp.controller('homeCtrl', function($scope, $http, CharacterDataSvc){
 	};
 	*/
 
-	$scope.characterData = CharacterDataSvc.data; //FROM characterData.js
+	$scope.characterData = $scope.CharacterDataSvc.data; //FROM characterData.js
 	
 	$scope.sanitizeObjectInputs = function(){
 		/*
@@ -255,8 +257,8 @@ myApp.controller('homeCtrl', function($scope, $http, CharacterDataSvc){
 	};
 
 	$scope.getColors = function(character, player){
-		var char = _.filter(characterData, {Name: character});
-		return char.colors;
+		var char = _.filter($scope.CharacterDataSvc.data, {Name: character});
+		return char.Colors;
 	};
 
 	$scope.reset = function(videoToReset){
@@ -395,23 +397,26 @@ myApp.directive("videoUrl", function () {
     }
 });
 
-myApp.directive('colorsForCharacter', function(CharacterDataSvc){
+myApp.directive('getCharacterAndColors', function(CharacterDataSvc){
 	return {
 		restrict: 'A',
-		scope:{
-			player: '='
-		},
-		link: function(scope, el, attr){
-			el.bind('change', function(event){
-				scope.$apply(function(){
-					var player = _.findWhere(CharacterDataSvc.data, {'name': scope.player.character});
-					scope.colors;
-				})
-			})
-		},
-		template: "<select ng-options='colors' ng-show='colors.length'>"
+		link:function(scope, el, attr){
+
+		}
 	}
 });
+
+myApp.directive('lowerVolume', function(){
+	return {
+		restrict:'A',
+		scope:{
+			lowerVolume: '='
+		},
+		link: function(scope, el){
+			el[0].volume = scope.lowerVolume;
+		}
+	}
+})
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
