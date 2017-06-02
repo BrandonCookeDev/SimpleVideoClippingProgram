@@ -16,7 +16,7 @@
 						<h4>Video:</h4>
 						<div id="videoDiv">
 							<video height="225" width="350"  ng-src="{{videoURL}}" id="previewVideo"
-								   controls autoplay style="object-fit:initial" lower-volume="0.3">
+								   controls autoplay style="object-fit:initial" lower-volume="0.3" track-time>
 							</video>
 						</div>
 						<tr>
@@ -60,7 +60,7 @@
 								 <input type='number' max='99' min='00' ng-model='file.ss.Minute' size='2' required/>
 								 <input type='number' max='99' min='00' ng-model='file.ss.Second' size='2' required/>
 								<br/><br/>
-								<input type="button" ng-click="getTimeStamp()" value="Get Current Video Timestamp" />
+								<input type="button" ng-click="getTimestamp(true)" value="Get Current Video Timestamp" />
 							</td>
 						</tr>
 						<tr>
@@ -70,7 +70,7 @@
 								 <input type='number' max='99' min='00' ng-model='file.end.Minute' size='2' required/>
 								 <input type='number' max='99' min='00' ng-model='file.end.Second' size='2' required/>
 								<br/><br/>
-								<input type="button" ng-click="getTimeStamp()" value="Get Current Video Timestamp" />
+								<input type="button" ng-click="getTimestamp(false)" value="Get Current Video Timestamp" />
 								<hr/>
 							</td>
 						</tr>

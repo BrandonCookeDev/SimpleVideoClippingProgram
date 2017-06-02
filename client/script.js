@@ -11,6 +11,7 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
     $scope.CharacterDataSvc = CharacterDataSvc;
 	$scope.selectVideos 	= [];
     $scope.videoURL 	 	= '';
+    $scope.timestamp		= '';
 
 	$scope.test 			= 'Hello World';
 	$scope.uploadTF 		= true;
@@ -75,6 +76,18 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 			$scope.file.ss.Hour + ':' + $scope.file.ss.Minute + ':' + $scope.file.ss.Second;
 		$scope.file.endString = 
 			$scope.file.end.Hour + ':' + $scope.file.end.Minute + ':' + $scope.file.end.Second;
+	};
+
+	$scope.getTimestamp = function(startTF){
+		var time;
+		if(startTF)
+			time = $scope.file.ssString;
+		else
+			time = $scope.file.endString;
+
+		time = $scope.timestamp;
+		var timestampSplit = time.split(':');
+		console.log(timestampSplit);
 	};
 
     $scope.listDirectory = function(){
@@ -375,6 +388,19 @@ myApp.directive("videoUrl", function () {
             });
         }
     }
+});
+
+myApp.directive('trackTime', function(){
+	return {
+		restrict: 'A',
+		link: function(scope, el){
+			el.bind("timeupdate", function(e){
+				scope.$apply(function(){
+                    scope.$parent.timestamp = el[0].currentTime
+				});
+			})
+		}
+	}
 });
 
 myApp.directive('lowerVolume', function(){
