@@ -16,11 +16,18 @@
 						<h4>Video:</h4>
 						<div id="videoDiv">
 							<video height="225" width="350"  ng-src="{{videoURL}}" id="previewVideo"
-								   controls autoplay style="object-fit:initial" lower-volume="0.3"></video>
+								   controls autoplay style="object-fit:initial" lower-volume="0.3">
+							</video>
 						</div>
 						<tr>
+							<select ng-init="listDirectory()"
+									ng-options="vidFile for vidFile in selectVideos"
+									ng-model="selectedVideo.selected"></select>
+							<input type="button" ng-click="getFile()" value="Use File"/>
+							<!--
 							<td>Input Video Directory</td>
 							<td><input type='text' id='inputFileDir' ng-model='file.inputFileDirectory' placeholder="absolute path here" required/></td>
+							-->
 						</tr>
 						<tr>
 							<td>Input Video File</td>
@@ -64,9 +71,9 @@
 								 <input type='number' max='99' min='00' ng-model='file.end.Second' size='2' required/>
 								<br/><br/>
 								<input type="button" ng-click="getTimeStamp()" value="Get Current Video Timestamp" />
+								<hr/>
 							</td>
 						</tr>
-
 						<tr>
 							<td>Round</td>
 							<td><input type='text' id='roundText' ng-model='file.round' required/></td>
@@ -82,7 +89,7 @@
 									<tr>
 										<td>Character</td>
 										<td><select ng-options="c.Name for c in CharacterDataSvc.data"
-													ng-change="getColors(file.player1.character)" id='player1Character'
+													id='player1Character'
 													ng-model='file.player1.character' /></td>
 									</tr>
 									<tr>

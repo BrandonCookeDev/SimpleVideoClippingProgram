@@ -2,23 +2,20 @@ var myApp = angular.module('myApp', [
 	'characterData'
 ]);
 
-var URL = window.URL || window.webkitURL
+var URL = window.URL || window.webkitURL;
 
-myApp.controller('homeCtrl', function($scope, $http, CharacterDataSvc){
+myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
     var id = 0;
     var statuses = ['notCreated', 'creating', 'created', 'uploading', 'uploaded', 'failed'];
 
     $scope.CharacterDataSvc = CharacterDataSvc;
+	$scope.selectVideos 	= [];
+    $scope.videoURL 	 	= '';
 
-	$scope.test = 'Hello World';
-	$scope.uploadTF = true;
-	$scope.videoQueue = [];
+	$scope.test 			= 'Hello World';
+	$scope.uploadTF 		= true;
+	$scope.videoQueue 		= [];
 
-	$scope.videoURL = '';
-
-	$scope.$watch('videoURL', function(){
-		console.log($scope.videoURL);
-	});
 
 	$scope.file = {
 	    id: '',
@@ -81,7 +78,25 @@ myApp.controller('homeCtrl', function($scope, $http, CharacterDataSvc){
 		$scope.file.endString = 
 			$scope.file.end.Hour + ':' + $scope.file.end.Minute + ':' + $scope.file.end.Second;
 	};
-	
+
+    $scope.listDirectory = function(){
+        var url = '/listVideoDirectory';
+
+        $http.get(url)
+			.then(function(res){
+                $scope.selectVideos = res.data;
+				console.log($scope.selectVideos);
+			})
+			.catch(function(err){
+                console.error(err);
+			})
+    };
+
+
+    $scope.getFile = function(filename){
+    	$scope.videoURL = 'videos/' + $scope.selectedVideo.selected;
+	};
+
 	$scope.changeOutputFilename = function(){
 		$scope.sanitizeObjectInputs();
 		
@@ -244,7 +259,7 @@ myApp.controller('homeCtrl', function($scope, $http, CharacterDataSvc){
 		}).catch(function(err){
 			//TODO
 		})
-	}
+	};
 
 	$scope.delete = function(videoToDelete){
 		$scope.videoQueue = _.reject($scope.videoQueue, function(video){
@@ -316,28 +331,7 @@ myApp.controller('homeCtrl', function($scope, $http, CharacterDataSvc){
         }
         else throw new Error('More than one element found');
 	}
-
-	/*
-	Dropzone.options.myDropzone({
-	  init: function() {
-		this.on("error", function(file, message) { alert(message); });
-	  }
-	});	
-	*/
-/*
-    $http.get('/cache')
-        .then(function(clipsArr){
-            $scope.videoQueue = clipsArr;
-        })
-        .catch(function(err){
-            console.warn('Cache is empty');
-        });
-*/
 });
-
-// Add Dropzone into page for automation file drop.
-//var myDropzone = Dropzone.forElement("div#my-awesome-dropzone");
-//myDropzone.on("error", function(file, message) { alert(message); });
 
 myApp.directive("fileread", function () {
     return {
@@ -351,21 +345,6 @@ myApp.directive("fileread", function () {
                     // or all selected files:
                     // scope.fileread = changeEvent.target.files;
                 });
-            });
-        }
-    }
-})
-
-myApp.directive("myStream", function(){
-    return {
-        restrict: 'A',
-        scope:{config:'='},
-        link: function(scope, element, attributes){
-            //Element is whatever element this "directive" is on
-            navigator.webkitGetUserMedia( {video:true},function (stream) {
-                element.src = $window.URL.createObjectURL(stream);
-                scope.config = {localvideo: element.src};
-                scope.$apply(); //sometimes this can be unsafe.
             });
         }
     }
@@ -395,15 +374,6 @@ myApp.directive("videoUrl", function () {
             });
         }
     }
-});
-
-myApp.directive('getCharacterAndColors', function(CharacterDataSvc){
-	return {
-		restrict: 'A',
-		link:function(scope, el, attr){
-
-		}
-	}
 });
 
 myApp.directive('lowerVolume', function(){

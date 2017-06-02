@@ -21,6 +21,9 @@ var cache	= require('./server/modules/cache/cache').instance;
 var portGl = 1337;
 var hostGl = '127.0.0.1';
 
+/** DIRECTORY TO LIST EDITABLE VIDEOS **/
+var videoDir = path.join(__dirname, 'client', 'videos');
+
 var app = express();
 app.use("/", express.static(path.join(__dirname,'client')));
 app.use(bodyParser.json());
@@ -43,6 +46,37 @@ app.get('/home', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
+app.get('/listVideoDirectory', function(req, res){
+	try {
+        fs.readdir(videoDir, function (err, items) {
+            if (err) {
+            	log.error(err);
+                return res.status(500).send(err);
+            }
+            return res.status(200).send(items);
+        })
+    }catch(err){
+        if (err) {
+            log.error(err);
+            return res.status(500).send(err);
+        }
+        return res.sentStatus(500);
+	}
+});
+
+app.get('/getVideo/:filename', function(req, res){
+	try{
+		var filename = req.params.filename;
+		var filepath = path.join(videoDir, filename);
+		res.sendFile(filepath);
+	}catch(err){
+        if (err) {
+            log.error(err);
+            return res.status(500).send(err);
+        }
+        return res.sentStatus(500);
+	}
+});
 
 /*
 	var process = new ffmpeg(path.join(filedir, filename));
