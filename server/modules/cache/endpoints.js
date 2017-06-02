@@ -1,10 +1,11 @@
-var cache = require('./cache').instance;
+const log   = require('winston');
+const cache = require('./cache').instance;
 
 module.exports = function(server){
     server.get('/cache', function(req, res){
-        cache.getClipCache()
+        cache.getTotalClipCache()
             .then(function(clipsArr){
-                res.send(clipsArr)
+                res.send(clipsArr || [])
             })
             .catch(function(err){
                 log.error(err.stack);
@@ -14,18 +15,24 @@ module.exports = function(server){
     });
 
     server.post('/cache', function(req, res){
-        var video = {
-            filedir 	: req.body.video.file.inputFileDirectory,
-            filename 	: req.body.video.file.inputFile,
-            startTime 	: req.body.video.file.ssString,
-            endTime   	: req.body.video.file.endString,
-            tournament 	: req.body.video.file.tournamentName,
-            round 		: req.body.video.file.round,
-            player1 	: req.body.video.file.player1,
-            player2		: req.body.video.file.player2,
-            output		: req.body.video.file.outputFileName
-        };
+        var video = req.body.video;
+        var file = video.file;
+        var tournament = file.tournamentName;
+        var round = file.round;
+        var p1tag = file.player1.smashtag;
+        var p2tag = file.player2.smashtag;
 
-        cache.cacheClipInfo(video);
+        cache.cacheClipInfo(video, tournament, round, p1tag, p2tag)
+            .then(function(success){
+                if(success) res.sendStatus(200);
+                else res.sendStatus(500);
+            })
+            .catch(function(err){
+                if(err){
+                    log.error(err);
+                    return res.status(500).send(err);
+                }
+                return res.sendStatus(500);
+            })
     });
-}
+};

@@ -145,6 +145,14 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 		};
 		$scope.videoQueue.push(element);
 
+		$http.post('/cache', {video: element})
+			.then(function(res){
+				console.log(res.status);
+			})
+			.catch(function(err){
+				console.error(err);
+			})
+
 		/*
 		cmdPromise.then(function(){
 			uploadPromise.then(data=>{
@@ -346,6 +354,14 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
         }
         else throw new Error('More than one element found');
 	}
+	
+	$http.get('/cache')
+		.then(function(res){
+			$scope.videoQueue = res.data;
+		})
+		.catch(function(err){
+			console.error(err);
+		})
 });
 
 myApp.directive("fileread", function () {
@@ -424,4 +440,3 @@ Number.prototype.toHHMMSS = function(){
     if (seconds < 10) {seconds = "0"+seconds;}
     return hours+':'+minutes+':'+seconds;
 };
-

@@ -15,6 +15,20 @@ class Cache{
             Cache.cache = new NodeCache({
                 stdTTL: 15000,
                 checkperiod: 2000
+            });
+
+            /** INIT ALL CLIPS AS AN EMPTY ARRAY **/
+            Cache.cache.get(keys.allClips, function(err, value) {
+                if (!value) {
+                    Cache.cache.set(keys.allClips, [], function(err, success){
+                        if(err){
+                            log.error(err);
+                            process.exit(1)
+                        }
+                        else if(success)
+                            return success;
+                    })
+                }
             })
         }
     }
@@ -26,7 +40,7 @@ class Cache{
 
     static addToClipCache(video){
         return new Promise(function(resolve, reject){
-            Cache.getClipCache()
+            Cache.getTotalClipCache()
                 .then(function(clipsArr){
                     if(!clipsArr){
                         var newClipsArr = [];
@@ -55,7 +69,7 @@ class Cache{
         })
     }
 
-    static getClipCache(){
+    static getTotalClipCache(){
         return new Promise(function(resolve, reject){
             Cache.cache.get(keys.allClips, function(err, value){
                 if(err){
@@ -68,24 +82,54 @@ class Cache{
         })
     }
 
-    static cacheClipInfo(video){
+    /*
+    static addToTotalClipCache(video){
         return new Promise(function(resolve, reject){
-            var uid = format(keys.clipInfo, video.tournament, video.round, video.player1.smashtag, video.player2.smashtag);
-            Cache.set(uid, video, function(err, success){
+            Cache.cache.get(keys.allClips, function(err, value){
                 if(err){
                     log.error(err.stack);
-                    reject(err);
+                    return reject(err);
                 }
-                else
-                    resolve(success);
+
+                value.push(video);
+                Cache.cache.set(keys.allClips, value, function(err, success){
+                    if(err){
+                        log.error(err.stack);
+                        return reject(err);
+                    }
+                    return resolve(success);
+                })
             })
+        })
+    }
+    */
+
+    static cacheClipInfo(video, tournament, round, p1tag, p2tag){
+        return new Promise(function(resolve, reject){
+            Cache.cache.get(keys.allClips, function(err, value){
+                if(err){
+                    log.error(err);
+                    return reject(err)
+                }
+
+                Cache.addToClipCache(video);
+                var uid = format(keys.clipInfo, tournament, round, p1tag, p2tag);
+                Cache.cache.set(uid, video, function(err, success){
+                    if(err){
+                        log.error(err.stack);
+                        return reject(err);
+                    }
+                    return resolve(success);
+                })
+
+            });
         })
     }
 
     static getClipInfo(tournament, round, p1tag, p2tag){
         return new Promise(function(resolve, reject){
             var uid = format(keys.clipInfo, tournament, round, p1tag, p2tag);
-            Cache.get(uid, function(err, value){
+            Cache.cache.get(uid, function(err, value){
                 if(err) {
                     log.error(err.stack);
                     reject(err);
