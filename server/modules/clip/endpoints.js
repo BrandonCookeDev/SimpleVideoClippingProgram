@@ -1,18 +1,20 @@
-var _           = require('lodash');
-var log         = require('winston');
-var path        = require('path');
-var express     = require('express');
-var router      = express.Router();
-var exec        = require('child_process').exec;
+const DIR         = __dirname;
 
-var Clip        = require('./Clip');
-var ClipQueue   = require('./ClipQueue');
-var Player      = require('./Player');
-var Match       = require('./Match');
+const _           = require('lodash');
+const log         = require('winston');
+const path        = require('path');
+const express     = require('express');
+const router      = express.Router();
+const exec        = require('child_process').exec;
+
+const Clip        = require('./Clip');
+const ClipQueue   = require('./ClipQueue');
+const Player      = require('./Player');
+const Match       = require('./Match');
 
 router.route('/createClip').post(function(req, res) {
     try {
-        var filedir = req.body.video.file.inputFileDirectory;
+        var filedir = path.join(DIR, '..'+path.sep+'..'+path.sep+'..', 'client', 'videos'); //req.body.video.file.inputFileDirectory;
         var filename = req.body.video.file.inputFileName;
         var outputDir = req.body.video.file.outputFileDirectory;
         var outputFile = req.body.video.file.outputFileName;

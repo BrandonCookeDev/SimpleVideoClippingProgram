@@ -19,9 +19,7 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 
 	$scope.file = {
 	    id: '',
-		inputFile : '',
 		inputFileName:'',
-		inputFileDirectory:'',
 		ss : {
 			Hour : 0,
 			Minute : 0,
@@ -93,7 +91,8 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
     };
 
 
-    $scope.getFile = function(filename){
+    $scope.getFile = function(){
+    	$scope.file.inputFileName = $scope.selectedVideo.selected;
     	$scope.videoURL = 'videos/' + $scope.selectedVideo.selected;
 	};
 
@@ -112,7 +111,7 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 		var file = angular.copy($scope.file);
         var uploadTF = angular.copy($scope.uploadTF);
 
-        file.inputFileName = $scope.file.inputFile.name;
+        //file.inputFileName = $scope.file.inputFile.name;
 		$scope.sanitizeObjectInputs();
 
 
@@ -369,7 +368,9 @@ myApp.directive("videoUrl", function () {
                 */
 
                 scope.$apply(function(){
-                    scope.$parent.videoURL = window.URL.createObjectURL(changeEvent.target.files[0]);
+                	var file = changeEvent.target.files[0];
+					scope.$parent.file.inputFileName = file.name;
+                    scope.$parent.videoURL = window.URL.createObjectURL(file);
 				});
             });
         }
