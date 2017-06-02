@@ -12,9 +12,13 @@ const ClipQueue   = require('./ClipQueue');
 const Player      = require('./Player');
 const Match       = require('./Match');
 
+const videoDir = path.join(DIR, '..'+path.sep+'..'+path.sep+'..', 'client', 'videos');
+
+ClipQueue.init();
+
 router.route('/createClip').post(function(req, res) {
     try {
-        var filedir = path.join(DIR, '..'+path.sep+'..'+path.sep+'..', 'client', 'videos'); //req.body.video.file.inputFileDirectory;
+        var filedir = req.body.video.file.inputFileDirectory || videoDir //req.body.video.file.inputFileDirectory;
         var filename = req.body.video.file.inputFileName;
         var outputDir = req.body.video.file.outputFileDirectory;
         var outputFile = req.body.video.file.outputFileName;

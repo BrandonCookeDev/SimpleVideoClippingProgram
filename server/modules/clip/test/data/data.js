@@ -1,24 +1,29 @@
-var path    = require('path');
+const _    = require('lodash');
+const path = require('path');
+
 
 exports.testPostData = {
     video: {
         file: {
             id: '',
-            inputFile: '',
             inputFileName: 'testVideo.mp4',
             inputFileDirectory: __dirname,
-            ss: {
-                Hour: 0,
-                Minute: 0,
-                Second: 4
+            start: {
+                timeStr: "00:00:04",
+                time: {
+                    Hour: 0,
+                    Minute: 0,
+                    Second: 4
+                }
             },
-            ssString: '00:00:04',
             end: {
-                Hour: 0,
-                Minute: 0,
-                Second: 59
+                timeStr: "00:00:59",
+                time: {
+                    Hour: 0,
+                    Minute: 0,
+                    Second: 59
+                }
             },
-            endString: '00:00:59',
             tournamentName: 'testTourney1',
             round: 'Grand Finals',
             player1: {
