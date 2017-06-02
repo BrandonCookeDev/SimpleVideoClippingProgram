@@ -56,21 +56,21 @@
 						<tr>
 							<td>Start Time</td>
 							<td>
-								 <input type='number' max='99' min='00' ng-model='file.ss.Hour' size='2' required/>
-								 <input type='number' max='99' min='00' ng-model='file.ss.Minute' size='2' required/>
-								 <input type='number' max='99' min='00' ng-model='file.ss.Second' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.start.time.Hour' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.start.time.Minute' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.start.time.Second' size='2' required/>
 								<br/><br/>
-								<input type="button" ng-click="getTimestamp(true)" value="Get Current Video Timestamp" />
+								<input type="button" ng-click="getTimestamp(file.start)" value="Get Current Video Timestamp" />
 							</td>
 						</tr>
 						<tr>
 							<td>End Time</td>
 							<td>
-								 <input type='number' max='99' min='00' ng-model='file.end.Hour' size='2' required/>
-								 <input type='number' max='99' min='00' ng-model='file.end.Minute' size='2' required/>
-								 <input type='number' max='99' min='00' ng-model='file.end.Second' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.end.time.Hour' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.end.time.Minute' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.end.time.Second' size='2' required/>
 								<br/><br/>
-								<input type="button" ng-click="getTimestamp(false)" value="Get Current Video Timestamp" />
+								<input type="button" ng-click="getTimestamp(file.end)" value="Get Current Video Timestamp" />
 								<hr/>
 							</td>
 						</tr>

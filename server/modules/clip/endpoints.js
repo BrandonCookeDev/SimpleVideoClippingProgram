@@ -21,8 +21,8 @@ router.route('/createClip').post(function(req, res) {
         var inFilepath = path.join(filedir, filename);
         var outFilepath = path.join(outputDir, outputFile);
 
-        var startTime = req.body.video.file.ssString;
-        var endTime = req.body.video.file.endString;
+        var startTime = req.body.video.file.start.timeStr;
+        var endTime = req.body.video.file.end.timeStr;
 
         var tournament = req.body.video.file.tournamentName;
         var round = req.body.video.file.round;

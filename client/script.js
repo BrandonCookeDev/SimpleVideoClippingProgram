@@ -21,18 +21,22 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 	$scope.file = {
 	    id: '',
 		inputFileName:'',
-		ss : {
-			Hour : 0,
-			Minute : 0,
-			Second : 0
-		},
-		ssString : '',
-		end : {
-			Hour : 0,
-			Minute : 0,
-			Second : 0
-		},
-		endString : '',
+		end: {
+	    	timeStr: '',
+            time: {
+                Hour: 0,
+                Minute: 0,
+                Second: 0
+            }
+        },
+		start: {
+            timeStr: '',
+            time: {
+                Hour: 0,
+                Minute: 0,
+                Second: 0
+            },
+        },
 		tournamentName: '',
 		round : '',
 		player1 : {
@@ -72,22 +76,21 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 		$scope.file.player1.replace(" ", "_");
 		$scope.file.player2.replace(" ", "_");		
 		*/
-		$scope.file.ssString =
-			$scope.file.ss.Hour + ':' + $scope.file.ss.Minute + ':' + $scope.file.ss.Second;
-		$scope.file.endString = 
-			$scope.file.end.Hour + ':' + $scope.file.end.Minute + ':' + $scope.file.end.Second;
+		$scope.file.start.timeStr =
+			$scope.file.start.time.Hour + ':' + $scope.file.start.time.Minute + ':' + $scope.file.start.time.Second;
+		$scope.file.end.timeStr =
+			$scope.file.end.time.Hour + ':' + $scope.file.end.time.Minute + ':' + $scope.file.end.time.Second;
 	};
 
-	$scope.getTimestamp = function(startTF){
-		var time;
-		if(startTF)
-			time = $scope.file.ssString;
-		else
-			time = $scope.file.endString;
+	$scope.getTimestamp = function(timeObj){
+		var timestamp = angular.copy($scope.timestamp);
 
-		time = $scope.timestamp;
-		var timestampSplit = time.split(':');
-		console.log(timestampSplit);
+		timeObj.timeStr = timestamp;
+		var split = timestamp.split(':');
+
+		timeObj.time.Hour = parseInt(split[0]);
+        timeObj.time.Minute = parseInt(split[1]);
+        timeObj.time.Second = Math.floor(parseInt(split[2]));
 	};
 
     $scope.listDirectory = function(){
@@ -314,7 +317,7 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 
 	$scope.switchToUpload = function(video){
 		setStatus('created', video);
-	}
+	};
 
 	function notifyCreated(createdVideo){
 		var filtered = _.filter($scope.videoQueue, function(video){
@@ -370,16 +373,6 @@ myApp.directive("videoUrl", function () {
         },
         link: function (scope, element, attributes) {
             element.bind("change", function (changeEvent) {
-                /*
-            	var reader = new FileReader();
-                reader.onload = function (loadEvent) {
-                    scope.$apply(function () {
-                        scope.videoURL = loadEvent.target.result;
-                    });
-                };
-                //reader.readAsDataURL(changeEvent.target.files[0]);
-                */
-
                 scope.$apply(function(){
                 	var file = changeEvent.target.files[0];
 					scope.$parent.file.inputFileName = file.name;
@@ -396,7 +389,7 @@ myApp.directive('trackTime', function(){
 		link: function(scope, el){
 			el.bind("timeupdate", function(e){
 				scope.$apply(function(){
-                    scope.$parent.timestamp = el[0].currentTime
+                    scope.timestamp = el[0].currentTime.toHHMMSS();
 				});
 			})
 		}
@@ -413,11 +406,22 @@ myApp.directive('lowerVolume', function(){
 			el[0].volume = scope.lowerVolume;
 		}
 	}
-})
+});
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
+Number.prototype.toHHMMSS = function(){
+	var sec_num = this;
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return hours+':'+minutes+':'+seconds;
+};
 
