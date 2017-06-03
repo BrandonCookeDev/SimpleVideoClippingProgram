@@ -1,8 +1,9 @@
 'use strict';
 
-let log    = require('winston');
-let format = require('util').format;
-let NodeCache = require('node-cache');
+const log    = require('winston');
+const format = require('util').format;
+const _      = require('lodash');
+const NodeCache = require('node-cache');
 
 let keys = {
     allClips: 'clips::all',
@@ -55,9 +56,26 @@ class Cache{
                         });
                     }
                     else{
+                        var existing =
+                            _.find(clipsArr, function(vid){
+                                return (vid.file.tournamentName == video.file.tournamentName &&
+                                vid.file.round == video.file.round &&
+                                vid.file.player1.smashtag == video.file.player1.smashtag &&
+                                vid.file.player2.smashtag == video.file.player2.smashtag)
+                            });
+
+                        if(existing){
+                            clipsArr = _.reject(clipsArr, function(vid){
+                                return (vid.file.tournamentName == video.file.tournamentName &&
+                                vid.file.round == video.file.round &&
+                                vid.file.player1.smashtag == video.file.player1.smashtag &&
+                                vid.file.player2.smashtag == video.file.player2.smashtag)
+                            });
+                        }
+
                         clipsArr.push(video);
-                        Cache.cache.set(keys.allClips, clipsArr, function(err, success){
-                            if(err){
+                        Cache.cache.set(keys.allClips, clipsArr, function (err, success) {
+                            if (err) {
                                 log.error(err.stack);
                                 reject(err);
                             }
@@ -82,47 +100,67 @@ class Cache{
         })
     }
 
-    /*
-    static addToTotalClipCache(video){
+    static removeClipFromTotal(video){
         return new Promise(function(resolve, reject){
-            Cache.cache.get(keys.allClips, function(err, value){
+            Cache.getTotalClipCache()
+                .then(function(total){
+                    total = _.reject(total, function(vid){
+                        return (vid.file.tournamentName == video.file.tournamentName &&
+                        vid.file.round == video.file.round &&
+                        vid.file.player1.smashtag == video.file.player1.smashtag &&
+                        vid.file.player2.smashtag == video.file.player2.smashtag)
+                    });
+
+                    Cache.cache.set(keys.allClips, total, function(err, success){
+                        if(!err && success) resolve(success);
+                        else reject(err);
+                    })
+                })
+                .catch(function(err){
+                    if(err){
+                        log.error(err);
+                        return reject(err);
+                    }
+                    return reject();
+                })
+        })
+    }
+
+    static deleteClipFromCache(video, tournament, round, p1tag, p2tag){
+        return new Promise(function(resolve, reject){
+            var uid = format(keys.clipInfo, tournament, round, p1tag, p2tag);
+            Cache.cache.del(uid, function(err, count){
+                if(err){
+                    log.error(err);
+                    return reject(err);
+                }
+
+                Cache.removeClipFromTotal(video)
+                    .then(function(success){
+                        resolve(success);
+                    })
+                    .catch(function(err){
+                        if(err){
+                            log.error(err);
+                            return reject(err);
+                        }
+                        return reject();
+                    })
+            });
+        })
+    }
+
+    static cacheClipInfo(video, tournament, round, p1tag, p2tag){
+        return new Promise(function(resolve, reject){
+            Cache.addToClipCache(video);
+            var uid = format(keys.clipInfo, tournament, round, p1tag, p2tag);
+            Cache.cache.set(uid, video, function(err, success){
                 if(err){
                     log.error(err.stack);
                     return reject(err);
                 }
-
-                value.push(video);
-                Cache.cache.set(keys.allClips, value, function(err, success){
-                    if(err){
-                        log.error(err.stack);
-                        return reject(err);
-                    }
-                    return resolve(success);
-                })
+                return resolve(success);
             })
-        })
-    }
-    */
-
-    static cacheClipInfo(video, tournament, round, p1tag, p2tag){
-        return new Promise(function(resolve, reject){
-            Cache.cache.get(keys.allClips, function(err, value){
-                if(err){
-                    log.error(err);
-                    return reject(err)
-                }
-
-                Cache.addToClipCache(video);
-                var uid = format(keys.clipInfo, tournament, round, p1tag, p2tag);
-                Cache.cache.set(uid, video, function(err, success){
-                    if(err){
-                        log.error(err.stack);
-                        return reject(err);
-                    }
-                    return resolve(success);
-                })
-
-            });
         })
     }
 

@@ -157,7 +157,7 @@
 					</tr>
 					<tr ng-repeat="video in videoQueue">
 						<td>
-							{{ video.file.inputFile }}
+							{{ video.file.inputFileName }}
 						</td>
 						<td>
 							{{ video.file.outputFileName }}
@@ -170,19 +170,19 @@
 						</td>
 						<td>
 							{{ video.file.player1.smashtag }} <br/>
-							{{ video.file.player1.character }} <br/>
+							{{ video.file.player1.character.Name }} <br/>
 							{{ video.file.player1.color }}
 						</td>
 						<td>
 							{{ video.file.player2.smashtag }} <br/>
-							{{ video.file.player2.character }} <br/>
+							{{ video.file.player2.character.Name }} <br/>
 							{{ video.file.player2.color }}
 						</td>
 						<td>
-							{{ video.file.ssString }}
+							{{ video.file.start.timeStr }}
 						</td>
 						<td>
-							{{ video.file.endString }}
+							{{ video.file.end.timeStr }}
 						</td>
 						<td>
 							<button ng-click="loadToForm(video)" class="btn btn-default">Load</button>

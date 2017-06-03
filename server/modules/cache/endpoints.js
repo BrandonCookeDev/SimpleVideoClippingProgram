@@ -35,4 +35,21 @@ module.exports = function(server){
                 return res.sendStatus(500);
             })
     });
+
+    server.post('/cache/delete', function(req, res) {
+        var video = req.body.video;
+
+        cache.deleteClipFromCache(video)
+            .then(function (success) {
+                if (success) return res.sendStatus(200);
+                else return res.sendStatus(500);
+            })
+            .catch(function (err) {
+                if (err) {
+                    log.error(err);
+                    return res.status(500).send(err);
+                }
+                return res.sendStatus(500);
+            })
+    });
 };

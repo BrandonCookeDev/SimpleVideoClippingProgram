@@ -287,7 +287,15 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 	$scope.delete = function(videoToDelete){
 		$scope.videoQueue = _.reject($scope.videoQueue, function(video){
 			return video.file.id == videoToDelete.file.id;
-		})
+		});
+
+		$http.post('/cache/delete', {video: videoToDelete})
+			.then(function(data){
+				console.log(data);
+			})
+			.catch(function(err){
+				console.error(err);
+			})
 	};
 
 	$scope.loadToForm = function(videoToLoad){
