@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html ng-app='myApp'>
+	<head>
+		<link rel="stylesheet" type="text/css" href='./node_modules/bootstrap/dist/css/bootstrap.min.css' />
+		<link rel="stylesheet" type="text/css" href='./node_modules/purecss/build/base.css'/>
+		<link rel="stylesheet" type="text/css" href='./node_modules/purecss/build/forms.css'/>
+		<link rel="stylesheet" type="text/css" href='./styles/style.css' />
+	</head>
+	<body>
+		<div ng-controller='homeCtrl' id='formDiv' class='container'>
+			<h2>Clip Creator Form</h2>
+			<div class="col-lg-2"></div>
+			<form class='pure-form' ng-submit='submitClipRequest()' ng-model='inputFile' id='clipForm'>
+				<div class="col-lg-4 col-md-6 col-sm-12">
+					<table>
+						<h4>Video:</h4>
+						<div id="videoDiv">
+							<video height="225" width="350"  ng-src="{{videoURL}}" id="previewVideo"
+								   controls autoplay style="object-fit:initial" lower-volume="0.3" track-time>
+							</video>
+						</div>
+						<tr>
+							<select ng-init="listDirectory()"
+									ng-options="vidFile for vidFile in selectVideos"
+									ng-model="selectedVideo.selected"></select>
+							<input type="button" ng-click="getFile()" value="Use File"/>
+							<!--
+							<td>Input Video Directory</td>
+							<td><input type='text' id='inputFileDir' ng-model='file.inputFileDirectory' placeholder="absolute path here" required/></td>
+							-->
+						</tr>
+						<tr>
+							<td hidden>Input Video File</td>
+							<td>
+								<!--<input type='file' accept="video/*" required video-url="videoURL"/>-->
+								<input type='text' id='inputFile' ng-model='file.inputFileName' hidden required/>
+							</td>
+						</tr>
+						<tr>
+							<td>Output Directory</td>
+							<td><input type="text" id="outputFileDirectory" ng-model="file.outputFileDirectory"/> </td>
+						</tr>
+						<tr>
+							<td>Tournament Name</td>
+							<td>  <input type='text' id='tournamentName' ng-model='file.tournamentName' required/> </td>
+						</tr>
+						<tr>
+							<td>Bracket Url</td>
+							<td><input type='text' id='bracketUrl' ng-model='file.bracketUrl'/></td>
+						</tr>
+					</table>
+				</div>
+				<div class="col-lg-4 col-md-6 col-sm-12">
+					<table>
+						<h4>Clip</h4>
+						<tr>
+							<td>Start Time</td>
+							<td>
+								 <input type='number' max='99' min='00' ng-model='file.start.time.Hour' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.start.time.Minute' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.start.time.Second' size='2' required/>
+								<br/><br/>
+								<input type="button" ng-click="getTimestamp(file.start)" value="Get Current Video Timestamp" />
+							</td>
+						</tr>
+						<tr>
+							<td>End Time</td>
+							<td>
+								 <input type='number' max='99' min='00' ng-model='file.end.time.Hour' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.end.time.Minute' size='2' required/>
+								 <input type='number' max='99' min='00' ng-model='file.end.time.Second' size='2' required/>
+								<br/><br/>
+								<input type="button" ng-click="getTimestamp(file.end)" value="Get Current Video Timestamp" />
+								<hr/>
+							</td>
+						</tr>
+						<tr>
+							<td>Round</td>
+							<td><input type='text' id='roundText' ng-model='file.round' required/></td>
+						</tr>
+						<tr>
+							<td>Player1 <img src="images/curlyBrace.png" height="100" width="50"/></td>
+							<td>
+								<table>
+									<tr>
+										<td>Smashtag</td>
+										<td><input type='text' id='player1Text' ng-model='file.player1.smashtag' required/></td>
+									</tr>
+									<tr>
+										<td>Character</td>
+										<td><select ng-options="c.Name for c in CharacterDataSvc.data"
+													id='player1Character'
+													ng-model='file.player1.character' /></td>
+									</tr>
+									<tr>
+										<td>Color</td>
+										<td><select ng-options="color for color in file.player1.character.Colors"
+													id='player1Color' ng-model='file.player1.color' /></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td>Player2  <img src="images/curlyBrace.png" height="100" width="50"/></td>
+							<td>
+								<table>
+									<tr>
+										<td>Smashtag</td>
+										<td><input type='text' id='player2Text' ng-model='file.player2.smashtag' required/></td>
+									</tr>
+									<tr>
+										<td>Character</td>
+										<td><select ng-options="character.Name for character in CharacterDataSvc.data"
+													id='player2Character'
+												 	ng-model='file.player2.character'  /></td>
+									</tr>
+									<tr>
+										<td>Color</td>
+										<td><select ng-options="color for color in file.player2.character.Colors"
+													id='player2Color' ng-model='file.player2.color' /></td>
+									</tr>
+								</table>
+							</td>
+
+						</tr>
+						<tr>
+							<td>Output File Name</td>
+							<td><input type='text' id='outputFileName' ng-model='file.outputFileName' style='{width: 200px;}'/> </br>
+								<input type='button' ng-click='changeOutputFilename()' value='Generate Name' />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type='submit' value='Generate Clip' class="btn btn-success" id='submitClipForm' />
+							</td>
+						</tr>
+					</table>
+				</div>
+			</form>
+			<div class="col-lg-2"></div>
+			<br />
+			<div class="col-lg-12 col-md-12 col-sm-12 whiteContainer">
+				<table class="clipCreationTable">
+					<tr>
+						<th>InputFile</th>
+						<th>OutputFile</th>
+						<th>Tournament</th>
+						<th>Round</th>
+						<th>Player1</th>
+						<th>Player2</th>
+						<th>StartTime</th>
+						<th>EndTime</th>
+						<th>Load Above</th>
+						<th>Action</th>
+						<th>Delete</th>
+						<th>Reset</th>
+					</tr>
+					<tr ng-repeat="video in videoQueue">
+						<td>
+							{{ video.file.inputFileName }}
+						</td>
+						<td>
+							{{ video.file.outputFileName }}
+						</td>
+						<td>
+							{{ video.file.tournamentName }}
+						</td>
+						<td>
+							{{ video.file.round }}
+						</td>
+						<td>
+							{{ video.file.player1.smashtag }} <br/>
+							{{ video.file.player1.character.Name }} <br/>
+							{{ video.file.player1.color }}
+						</td>
+						<td>
+							{{ video.file.player2.smashtag }} <br/>
+							{{ video.file.player2.character.Name }} <br/>
+							{{ video.file.player2.color }}
+						</td>
+						<td>
+							{{ video.file.start.timeStr }}
+						</td>
+						<td>
+							{{ video.file.end.timeStr }}
+						</td>
+						<td>
+							<button ng-click="loadToForm(video)" class="btn btn-default">Load</button>
+						</td>
+						<td>
+							<button ng-click="clip(video)" class="btn btn-success" ng-show="video.status == 'notCreated'">Create Clip</button><br/>
+							<button ng-show="video.status == 'notCreated'" ng-click="switchToUpload(video)" class="btn btn-upload"><p>Switch to Upload</p></button>
+
+							<label ng-show="video.status == 'creating'">Creating clip...</label>
+							<button ng-click="upload(video)" class="btn btn-info" ng-show="video.status == 'created'" >Upload Clip</button>
+							<button ng-show="video.status == 'created'" ng-click="reset(video)"><p>Switch to Create</p></button>
+
+							<label ng-show="video.status == 'uploading'">Uploading... <br/> {{ video.file.bytesUploaded }}</label>
+							<label ng-show="video.status == 'uploaded'">Complete!</label>
+						</td>
+						<td>
+							<button ng-click="delete(video)" class="btn btn-danger">Delete</button>
+						</td>
+						<td>
+							<button ng-click="reset(video)" class="btn btn-default">Reset</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		
+		<script src='./node_modules/angular/angular.min.js'></script>
+		<script src='./node_modules/jquery/dist/jquery.min.js'></script>
+		<script src='./node_modules/bootstrap/dist/js/bootstrap.min.js'></script>
+		<script src='./node_modules/dropzone/dist/dropzone.js'></script>
+		<script src="./lib/underscore.js"></script>
+		<script src='./lib/clip.js'></script>
+
+		<script src="./webapp/services/characterData.service.js"></script>
+		<script src='./script.js'></script>
+	</body>
+</html>
