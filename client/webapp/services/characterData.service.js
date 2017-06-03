@@ -123,7 +123,7 @@ angular.module('characterData', [])
                 {
                     "Name": "Luigi",
                     "Colors": [
-                        "Neutra",
+                        "Neutral",
                         "Blue",
                         "White",
                         "Pink"
