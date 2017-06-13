@@ -197,6 +197,7 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
                             var statusUrl = data.headers('Location');
 							$http.get(statusUrl)
                                 .then(function(response){
+									console.log(response);
                                     if(response.data) {
                                         setStatus('created', video);
                                         clearInterval(checkClipStatus)
