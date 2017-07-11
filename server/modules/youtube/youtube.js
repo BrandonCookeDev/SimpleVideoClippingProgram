@@ -23,12 +23,13 @@ class Youtube{
         Youtube.sendOAuth();
     }
 
-    constructor(file, p1name, p2name, tournament, round, bracket){
+    constructor(file, p1name, p2name, tournament, round, description, bracket){
         this.file = file;
         this.p1name = p1name;
         this.p2name = p2name;
         this.tournament = tournament;
         this.round = round;
+        this.description = description;
         this.bracket = bracket;
 
         this.id = _.join([tournament, round, p1name, p2name], "::");
@@ -168,12 +169,15 @@ class Youtube{
 
     createVideoDetails(){
         let title = this.tournament + ' - ' + this.p1name + ' vs ' + this.p2name + ' - ' + this.round;
+
+        /*
         let description = this.tournament + '! View tournament info and brackets at ' + this.bracket +
             '\n\n' +
             'Watch live and follow us at: \n'  +
             'http://twitch.tv/RecursionGG\n'   +
             'http://twitter.com/RecursionGG\n' +
             'http://facebook.com/RecursionGG\n';
+        */
 
         //////////////////////////////////////////
         // TAGS
@@ -200,7 +204,7 @@ class Youtube{
 
         let deets = {
             title: title,
-            description: description,
+            description: this.description,
             tags: tags.split(',')
         };
 

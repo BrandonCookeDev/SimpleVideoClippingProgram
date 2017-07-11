@@ -29,8 +29,9 @@ module.exports = function(server){
         var p2name 		= file.player2.smashtag;
         var output 		= file.outputFileName;
         var bracket 	= file.bracketUrl;
+        var description = file.videoDescription;
 
-        var yt = new Youtube(output, p1name, p2name, tournament, round, bracket);
+        var yt = new Youtube(output, p1name, p2name, tournament, round, description, bracket);
         if(!Youtube.isAuthenticated())
             res.sendStatus(500);
         else{
