@@ -1,4 +1,4 @@
-# SimpleVideoClippingProgram
+# RecursionGG cookiE Cutter
 A simple video clip creation program using Angular, Bootstrap, and Express with NodeJS
 
 # WARINING
