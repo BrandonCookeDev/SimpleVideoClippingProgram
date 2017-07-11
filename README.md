@@ -19,7 +19,7 @@ cmd command string that creates a new clip using ffmpeg, a free video encoding t
     - The application will look in this folder for your videos to edit.
 - Once you have that, perform the following steps in CMD:
     - cd into the project directory
-    - run ```npm installAll```
+    - run ```npm run-script installAll```
         - this will install all dependencies
     - run command ```node server```
         - this will host the app on http://localhost:1337
