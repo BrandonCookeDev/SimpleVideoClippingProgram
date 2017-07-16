@@ -17,7 +17,6 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 	$scope.uploadTF 		= true;
 	$scope.videoQueue 		= [];
 
-
 	$scope.file = {
 	    id: '',
 		inputFileName:'',
@@ -55,11 +54,19 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 		noAudio : false,
 		outputFileName : '',
         outputFileDirectory: '',
+		videoDescription: '',
 		bracketUrl: '',
 		fileSize:'',
 		bytesUploaded:'',
 		percentUploaded:0
 	};
+
+    $scope.setDefaultDescription = function(){ $scope.file.videoDescription =
+		$scope.file.tournamentName + '! Brackets and event info at ' + $scope.file.bracketUrl + '. \n \
+			Watch live and follow us at: \n \
+			http://twitch.tv/RecursionGG \n \
+			http://twitter.com/RecursionGG \n \
+			http://facebook.com/RecursionGG'; };
 
 	/*
 	$scope.videoChanged = function(event){

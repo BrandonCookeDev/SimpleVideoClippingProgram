@@ -8,8 +8,11 @@
 		<link rel="stylesheet" type="text/css" href='./styles/style.css' />
 	</head>
 	<body>
+		<div style="left:0; top:0; position: fixed">
+			<img src="images/RCSWhiteTextTiny.png" />
+		</div>
 		<div ng-controller='homeCtrl' id='formDiv' class='container'>
-			<h2>Clip Creator Form</h2>
+			<h2>RecursionGG cookiE Cutter</h2>
 
 			<!-- VIDEO DIV -->
 			<div class="row">
@@ -60,6 +63,14 @@
 							<tr>
 								<td>Bracket Url</td>
 								<td><input type='text' id='bracketUrl' ng-model='file.bracketUrl'/></td>
+							</tr>
+							<tr>
+								<td>Youtube Description</td>
+								<td>
+									<textarea ng-model="file.videoDescription" height="50" width="200"></textarea>
+									<br/>
+									<button ng-click="setDefaultDescription()" class="btn-success btn">Default Description</button>
+								</td>
 							</tr>
 						</table>
 					</div>
