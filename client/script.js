@@ -39,11 +39,13 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 		tournamentName: '',
 		round : '',
 		player1 : {
+			sponsor: '',
 	    	smashtag: '',
 			character: '',
 			color: ''
 		},
 		player2 : {
+			sponsor: '',
             smashtag: '',
             character: '',
             color: ''
@@ -131,6 +133,18 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 	};
 	
 	$scope.submitClipRequest = function(){
+		let before = moment(new Date(0, 0, 0, $scope.file.start.time.Hour, 
+											 $scope.file.start.time.Minute,
+											 $scope.file.start.time.Second));
+		let after  = moment(new Date(0, 0, 0, $scope.file.end.time.Hour, 
+											 $scope.file.end.time.Minute,
+											 $scope.file.end.time.Second));
+		if(!after.isAfter(before)){
+			alert("End time cannot be before start time");
+			return;
+		}
+			
+		
 		var file = angular.copy($scope.file);
         var uploadTF = angular.copy($scope.uploadTF);
 
@@ -439,6 +453,65 @@ myApp.directive('lowerVolume', function(){
 		}
 	}
 });
+
+myApp.directive('exportToCsv',function(){
+  	return {
+    	restrict: 'A',
+    	link: function (scope, element, attrs) {
+    		var el = element[0];
+	        element.bind('click', function(e){
+	        	var table = e.target.nextElementSibling;
+	        	var csvString = '';
+	        	for(var i=0; i<table.rows.length;i++){
+	        		var rowData = table.rows[i].cells;
+	        		for(var j=0; j<rowData.length;j++){
+	        			csvString = csvString + rowData[j].innerHTML.trim() + ",";
+	        		}
+	        		csvString = csvString.substring(0,csvString.length - 1);
+	        		csvString = csvString + "\n";
+			    }
+	         	csvString = csvString.substring(0, csvString.length - 1);
+	         	var a = $('<a/>', {
+		            style:'display:none',
+		            href:'data:application/octet-stream;base64,'+btoa(csvString),
+		            download:'tournament.csv'
+		        }).appendTo('body')
+		        a[0].click()
+		        a.remove();
+	        });
+    	}
+  	}
+	});
+	
+myApp.directive('exportToCsvDoubles',function(){
+  	return {
+    	restrict: 'A',
+    	link: function (scope, element, attrs) {
+    		var el = element[0];
+	        element.bind('click', function(e){
+	        	var table = e.target.nextElementSibling;
+	        	var csvString = '';
+	        	for(var i=0; i<table.rows.length;i++){
+	        		var rowData = table.rows[i].cells;
+	        		for(var j=0; j<rowData.length;j++){
+						
+	        			csvString = csvString + rowData[j].innerHTML.trim() + ",";
+	        		}
+	        		csvString = csvString.substring(0,csvString.length - 1);
+	        		csvString = csvString + "\n";
+			    }
+	         	csvString = csvString.substring(0, csvString.length - 1);
+	         	var a = $('<a/>', {
+		            style:'display:none',
+		            href:'data:application/octet-stream;base64,'+btoa(csvString),
+		            download:'tournament.csv'
+		        }).appendTo('body')
+		        a[0].click()
+		        a.remove();
+	        });
+    	}
+  	}
+	});
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;

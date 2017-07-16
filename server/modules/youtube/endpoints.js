@@ -23,15 +23,18 @@ module.exports = function(server){
         var file = req.body.file;
 
         var input 		= file.inputFileName;
-        var tournament 	= file.tournamentName;
+        var tournament= file.tournamentName;
         var round 		= file.round;
+		    var p1sponsor	= file.player1.sponsor;
         var p1name 		= file.player1.smashtag;
+		    var p2sponsor	= file.player2.sponsor;
         var p2name 		= file.player2.smashtag;
         var output 		= file.outputFileName;
         var bracket 	= file.bracketUrl;
         var description = file.videoDescription;
 
-        var yt = new Youtube(output, p1name, p2name, tournament, round, description, bracket);
+        var yt = new Youtube(output, p1sponsor, p1name, p2sponsor, p2name, tournament, round, bracket);
+
         if(!Youtube.isAuthenticated())
             res.sendStatus(500);
         else{

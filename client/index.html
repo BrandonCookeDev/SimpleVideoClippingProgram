@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html ng-app='myApp'>
 	<head>
+		<title>RCS cookiE Cutter</title>
 		<link rel="stylesheet" type="text/css" href='./node_modules/bootstrap/dist/css/bootstrap.min.css' />
 		<link rel="stylesheet" type="text/css" href='./node_modules/purecss/build/base.css'/>
 		<link rel="stylesheet" type="text/css" href='./node_modules/purecss/build/forms.css'/>
@@ -113,6 +114,10 @@
 								<td>
 									<table>
 										<tr>
+											<td>Sponsor</td>
+											<td><input type='text' id='player1Sponsor' ng-model='file.player1.sponsor'/></td>
+										</tr>
+										<tr>
 											<td>Smashtag</td>
 											<td><input type='text' id='player1Text' ng-model='file.player1.smashtag' required/></td>
 										</tr>
@@ -138,6 +143,10 @@
 								<td>Player2  <img src="images/curlyBrace.png" height="100" width="50"/></td>
 								<td>
 									<table>
+										<tr>
+											<td>Sponsor</td>
+											<td><input type='text' id='player2Sponsor' ng-model='file.player2.sponsor'/></td>
+										</tr>
 										<tr>
 											<td>Smashtag</td>
 											<td><input type='text' id='player2Text' ng-model='file.player2.smashtag' required/></td>
@@ -255,6 +264,44 @@
 						</td>
 					</tr>
 				</table>
+				
+							<!--Tournament-->
+							<!--Round-->
+							<!--Player1 Tag-->
+							<!--Player1 Character-->
+							<!--Player1 Color-->
+							<!--Player2 Tag-->
+							<!--Player2 Character-->
+							<!--Player2 Color-->
+				<button export-to-csv class='btn btn-success'>Download Thumbnail CSV</button>
+				<table hidden name='thumbnailCSVTable'>
+					<tr ng-repeat="video in videoQueue">
+						<td>
+							{{ video.file.tournamentName }}
+						</td>
+						<td>
+							{{ video.file.round }}
+						</td>
+						<td>
+							{{ video.file.player1.smashtag }}
+						</td>
+						<td>
+							{{ video.file.player1.character.Name }} 
+						</td>
+						<td>
+							{{ video.file.player1.color }}
+						</td>
+						<td>
+							{{ video.file.player2.smashtag }}
+						</td>
+						<td>
+							{{ video.file.player2.character.Name }} 
+						</td>
+						<td>
+							{{ video.file.player2.color }}
+						</td>
+				</tr>
+				</table>
 			</div>
 		</div>
 		
@@ -263,6 +310,7 @@
 		<script src='./node_modules/bootstrap/dist/js/bootstrap.min.js'></script>
 		<script src='./node_modules/dropzone/dist/dropzone.js'></script>
 		<script src="./lib/underscore.js"></script>
+		<script src="./lib/moment.js"></script>
 		<script src='./lib/clip.js'></script>
 
 		<script src="./webapp/services/characterData.service.js"></script>
