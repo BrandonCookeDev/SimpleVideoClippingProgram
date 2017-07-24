@@ -184,7 +184,6 @@ class Youtube{
             'http://twitch.tv/RecursionGG\n'   +
             'http://twitter.com/RecursionGG\n' +
             'http://facebook.com/RecursionGG\n';
-        */
 
         //////////////////////////////////////////
         // TAGS
