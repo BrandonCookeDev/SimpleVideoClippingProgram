@@ -23,12 +23,12 @@ class Youtube{
         Youtube.sendOAuth();
     }
 
-    constructor(file, p1sponsor, p1name, p2sponsor, p2name, tournament, round, bracket){
+    constructor(file, p1sponsor, p1name, p2sponsor, p2name, tournament, round, description, bracket){
 
         this.file = file;
-		    this.p1sponsor = p1sponsor;
+		this.p1sponsor = p1sponsor;
         this.p1name = p1name;
-		    this.p2sponsor = p2sponsor;
+		this.p2sponsor = p2sponsor;
         this.p2name = p2name;
         this.tournament = tournament;
         this.round = round;
@@ -172,10 +172,10 @@ class Youtube{
 
     createVideoDetails(){
         
-		    let p1name = this.p1sponsor ? (this.p1sponsor + ' | ' + this.p1name) : this.p1name;
-		    let p2name = this.p2sponsor ? (this.p2sponsor + ' | ' + this.p2name) : this.p2name;
-		
-		    let title = this.tournament + ' - ' + p1name + ' vs ' + p2name + ' - ' + this.round;
+		let p1name = this.p1sponsor ? (this.p1sponsor + ' | ' + this.p1name) : this.p1name;
+		let p2name = this.p2sponsor ? (this.p2sponsor + ' | ' + this.p2name) : this.p2name;
+	
+		let title = this.tournament + ' - ' + p1name + ' vs ' + p2name + ' - ' + this.round;
 		
 
         let description = this.tournament + '! View tournament info and brackets at ' + this.bracket +
