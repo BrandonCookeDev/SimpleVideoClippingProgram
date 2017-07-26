@@ -1,17 +1,24 @@
+var log			= require('winston');
 const execSync 	= require('child_process').execSync;
 const moment 	= require('moment');
+const format	= require('util').format;
 
 var usage = "USAGE node clip.js [input file] [start time] [end time] [output file name] \n" +
 			"--start time : format = xx:xx:xx \n" + 
 			"--end time : format = xx:xx:xx \n";
 
 class Clip{
-	constructor(input, startTime, endTime, output){
+	constructor(input, startTime, endTime, output, vcodec, acodec, crf){
 		this.input = input;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.duration =
 			this.createDuration(this.startTime, this.endTime);
+
+		/* ENCODING OPTIONS */
+		this.vcodec = vcodec;
+		this.acodec = acodec;
+		this.crf = crf;
 		this.output = output;
 	}
 
@@ -20,10 +27,24 @@ class Clip{
 	}
 
 	createFfmpegCommand(){
-        return 'ffmpeg -i ' + this.input + ' -ss ' + this.startTime + ' -t ' + this.duration + ' -acodec copy -vcodec copy ' + this.output;
+		var ret = [];
+
+		ret = 
+			'ffmpeg -i %s -ss %s -t %s -vcodec %s -acodec %s -crf %s %s';
+
+		ret = format(ret, this.input, this.startTime, this.duration, this.vcodec, this.acodec, this.crf ? this.crf : '', this.output)
+			
+			/*
+        var s = 'ffmpeg -i ' + this.input + ' -ss ' + this.startTime + ' -t ' + this.duration + ' -acodec copy -vcodec copy %s ' + this.output;
+        if(this.crf)
+        	s = format(s, '-crf ' + this.crf)
+        else s = format(s, '');
+			*/
+
+        log.info(ret);
+        return ret;
     }
 }
-
 
 if(process.argv.length != 6){
 	console.log(usage);

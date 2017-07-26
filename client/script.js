@@ -50,8 +50,9 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
             character: '',
             color: ''
 		},
-		yesAudio : true,
-		noAudio : false,
+		crf: '',
+		vcodec: '',
+		acodec: '',
 		outputFileName : '',
         outputFileDirectory: '',
 		videoDescription: '',

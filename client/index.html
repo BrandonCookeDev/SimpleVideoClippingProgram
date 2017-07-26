@@ -98,6 +98,35 @@
 									<input type="button" ng-click="getTimestamp(file.end)" value="Get Current Video Timestamp" />
 								</td>
 							</tr>
+							<tr>
+								<td>
+									<span>
+										<label>vcodec</label> <br/>
+										<select ng-model='file.vcodec'>
+											<option>copy</option>
+											<option>libx264</option>
+										</select>
+									</span>
+								</td>
+								<td>
+									<span>
+										<label>acodec</label> <br/>
+										<select ng-model='file.acodec' >
+											<option>copy</option>
+											<option>none</option>
+										</select>
+									</span>
+								</td>
+							</tr>
+
+							<tr>
+								<td>
+									<span> 
+										<label>CFT</label> <br/>
+										<input type='number' size=10 ng-model='file.crf' />
+									</span>
+								</td>
+							</tr>
 						</table>
 					</div>
 				</div>
@@ -110,7 +139,7 @@
 					<div class="col-lg-5 greyContainer">
 						<table>
 							<tr>
-								<td>Player1 <img src="images/curlyBrace.png" height="100" width="50"/></td>
+								<td>Player1 <img src="images/curlyBrace.png" height="200" width="50"/></td>
 								<td>
 									<table>
 										<tr>
@@ -140,7 +169,7 @@
 					<div class="col-lg-5 greyContainer">
 						<table>
 							<tr>
-								<td>Player2  <img src="images/curlyBrace.png" height="100" width="50"/></td>
+								<td>Player2  <img src="images/curlyBrace.png" height="200" width="50"/></td>
 								<td>
 									<table>
 										<tr>
