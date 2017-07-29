@@ -111,7 +111,7 @@
 								<td>
 									<span>
 										<label>acodec</label> <br/>
-										<select ng-model='file.acodec' >
+										<select ng-model='file.acodec'>
 											<option>copy</option>
 											<option>none</option>
 										</select>
@@ -123,7 +123,7 @@
 								<td>
 									<span> 
 										<label>CFT</label> <br/>
-										<input type='number' size=10 ng-model='file.crf' />
+										<input type='number' size=10 ng-model='file.crf' ng-show='file.acodec == \'libx264\''/>
 									</span>
 								</td>
 							</tr>

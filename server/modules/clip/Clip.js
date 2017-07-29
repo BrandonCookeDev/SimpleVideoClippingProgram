@@ -33,14 +33,10 @@ class Clip{
 			'ffmpeg -i %s -ss %s -t %s -vcodec %s -acodec %s -crf %s %s';
 
 		ret = format(ret, this.input, this.startTime, this.duration, this.vcodec, this.acodec, this.crf ? this.crf : '', this.output)
-			
-			/*
-        var s = 'ffmpeg -i ' + this.input + ' -ss ' + this.startTime + ' -t ' + this.duration + ' -acodec copy -vcodec copy %s ' + this.output;
-        if(this.crf)
-        	s = format(s, '-crf ' + this.crf)
-        else s = format(s, '');
-			*/
-
+		if(this.acodec === 'none'){
+			ret = ret.replace('-acodec none', '-an');
+		}
+	
         log.info(ret);
         return ret;
     }
