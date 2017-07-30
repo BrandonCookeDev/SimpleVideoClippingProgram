@@ -2,6 +2,7 @@ body{
 	text-align: center;
     margin: 0 auto;
     background-color: #DBF0FD;
+    overflow-x: hidden;
 }
 
 div#formDiv{
@@ -75,4 +76,36 @@ div.sep{
 .btn-upload{
     background-color:lightblue;
     color:white;
+}
+
+.rightSidePanel{
+    background: #666;
+    position: absolute;
+    width: 280px;
+    height: 100%;
+    top: 45%;
+    right:-280px;
+    padding-left: 20px
+}
+
+#slideout {
+    background: #666;
+    position: absolute;
+    width: 280px;
+    height: 80px;
+    top: 45%;
+    right:-280px;
+    padding-left: 20px
+}
+
+#clickme {
+    position: absolute;
+    top: 0; left: 0;
+    height: 20px;
+    width: 20px;
+    background: #ff0000;
+}
+
+#slidecontent {
+    float:left;
 }

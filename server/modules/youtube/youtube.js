@@ -143,13 +143,18 @@ class Youtube{
                         try {
                             let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
 
-                            //UPDATE ELEMENT IN THE VIDEO QUEUE WITH NEW BYTES DISPATCHED
-                            thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
-                            /*
-                             _.extend(_.findc(Youtube.queue,
-                             function(yt){return yt.id == thisYT.id}), thisYT);
-                             */
-                            log.info(uploaded + thisYT.file);
+                            if(thisYT.bytesUploaded) {
+                                //UPDATE ELEMENT IN THE VIDEO QUEUE WITH NEW BYTES DISPATCHED
+                                thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
+                                /*
+                                 _.extend(_.findc(Youtube.queue,
+                                 function(yt){return yt.id == thisYT.id}), thisYT);
+                                 */
+                                log.info(uploaded + thisYT.file);
+                            }
+                            else{
+                                console.error('No bytes uploaded');
+                            }
                         } catch (err) {
                             log.error(err.stack);
                             thisYT.removeFromQueue();

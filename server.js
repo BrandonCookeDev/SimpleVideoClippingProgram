@@ -37,6 +37,7 @@ var clipCreationQueue = [];
 require('./server/modules/youtube/endpoints')(app);
 require('./server/modules/cache/endpoints')(app);
 require('./server/modules/clip/endpoints')(app);
+require('./server/modules/fileSystem/endpoints')(app);
 
 app.get('/', function (req, res) {
    res.send('Hello World');
@@ -46,6 +47,7 @@ app.get('/home', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
+/*
 app.get('/listVideoDirectory', function(req, res){
 	try {
         fs.readdir(videoDir, function (err, items) {
@@ -63,6 +65,7 @@ app.get('/listVideoDirectory', function(req, res){
         return res.sentStatus(500);
 	}
 });
+*/
 
 app.get('/getVideo/:filename', function(req, res){
 	try{

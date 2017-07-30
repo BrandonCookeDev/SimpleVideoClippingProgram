@@ -1,0 +1,107 @@
+<div class="col-lg-12 col-md-12 col-sm-12 whiteContainer"
+    >
+    <table class="clipCreationTable">
+        <tr>
+            <th>InputFile</th>
+            <th>OutputFile</th>
+            <th>Tournament</th>
+            <th>Round</th>
+            <th>Player1</th>
+            <th>Player2</th>
+            <th>StartTime</th>
+            <th>EndTime</th>
+            <th>Load Above</th>
+            <th>Action</th>
+            <th>Delete</th>
+            <th>Reset</th>
+        </tr>
+        <tr ng-repeat="video in videoQueue">
+            <td>
+                {{ video.file.inputFileName }}
+            </td>
+            <td>
+                {{ video.file.outputFileName }}
+            </td>
+            <td>
+                {{ video.file.tournamentName }}
+            </td>
+            <td>
+                {{ video.file.round }}
+            </td>
+            <td>
+                {{ video.file.player1.smashtag }} <br/>
+                {{ video.file.player1.character.Name }} <br/>
+                {{ video.file.player1.color }}
+            </td>
+            <td>
+                {{ video.file.player2.smashtag }} <br/>
+                {{ video.file.player2.character.Name }} <br/>
+                {{ video.file.player2.color }}
+            </td>
+            <td>
+                {{ video.file.start.timeStr }}
+            </td>
+            <td>
+                {{ video.file.end.timeStr }}
+            </td>
+            <td>
+                <button ng-click="loadToForm(video)" class="btn btn-default">Load</button>
+            </td>
+            <td>
+                <button ng-click="clip(video)" class="btn btn-success" ng-show="video.status == 'notCreated'">Create Clip</button><br/>
+                <button ng-show="video.status == 'notCreated'" ng-click="switchToUpload(video)" class="btn btn-upload"><p>Switch to Upload</p></button>
+
+                <label ng-show="video.status == 'creating'">Creating clip...</label>
+                <button ng-click="upload(video)" class="btn btn-info" ng-show="video.status == 'created'" >Upload Clip</button>
+                <button ng-show="video.status == 'created'" ng-click="reset(video)"><p>Switch to Create</p></button>
+
+                <label ng-show="video.status == 'uploading'">Uploading... <br/> {{ video.file.bytesUploaded }}</label>
+                <label ng-show="video.status == 'uploaded'">Complete!</label>
+            </td>
+            <td>
+                <button ng-click="delete(video)" class="btn btn-danger">Delete</button>
+            </td>
+            <td>
+                <button ng-click="reset(video)" class="btn btn-default">Reset</button>
+            </td>
+        </tr>
+    </table>
+
+    <!--Tournament-->
+    <!--Round-->
+    <!--Player1 Tag-->
+    <!--Player1 Character-->
+    <!--Player1 Color-->
+    <!--Player2 Tag-->
+    <!--Player2 Character-->
+    <!--Player2 Color-->
+    <button export-to-csv class='btn btn-success'>Download Thumbnail CSV</button>
+    <table hidden name='thumbnailCSVTable'>
+        <tr ng-repeat="video in videoQueue">
+            <td>
+                {{ video.file.tournamentName }}
+            </td>
+            <td>
+                {{ video.file.round }}
+            </td>
+            <td>
+                {{ video.file.player1.smashtag }}
+            </td>
+            <td>
+                {{ video.file.player1.character.Name }}
+            </td>
+            <td>
+                {{ video.file.player1.color }}
+            </td>
+            <td>
+                {{ video.file.player2.smashtag }}
+            </td>
+            <td>
+                {{ video.file.player2.character.Name }}
+            </td>
+            <td>
+                {{ video.file.player2.color }}
+            </td>
+        </tr>
+    </table>
+</div>
