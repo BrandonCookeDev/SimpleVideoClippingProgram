@@ -1,0 +1,213 @@
+<div>
+    <!-- VIDEO DIV -->
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10 col-sm-12 col-md-12 whiteContainer">
+            <div id="videoDiv">
+                <video height="478.125" width="850"  ng-src="{{videoURL}}" id="previewVideo"
+                       controls autoplay style="object-fit:initial" lower-volume="0.3" track-time>
+                </video>
+            </div>
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+    <div class="sep"></div>
+
+    <form class='pure-form' ng-submit='submitClipRequest()' ng-model='inputFile' id='clipForm'>
+        <div class="row">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-4 col-md-6 col-sm-12 greyContainer">
+                <table>
+                    <h4>Video:</h4>
+                    <tr>
+                        <select ng-init="listDirectory()"
+                                ng-options="vidFile for vidFile in selectVideos"
+                                ng-model="selectedVideo.selected"></select>
+                        <input type="button" ng-click="getFile()" value="Use File"/>
+                        <!--
+                        <td>Input Video Directory</td>
+                        <td><input type='text' id='inputFileDir' ng-model='file.inputFileDirectory' placeholder="absolute path here" required/></td>
+                        -->
+                    </tr>
+                    <tr>
+                        <td hidden>Input Video File</td>
+                        <td>
+                            <!--<input type='file' accept="video/*" required video-url="videoURL"/>-->
+                            <input type='text' id='inputFile' ng-model='file.inputFileName' hidden required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Output Directory</td>
+                        <td><input type="text" id="outputFileDirectory" ng-model="file.outputFileDirectory"/> </td>
+                    </tr>
+                    <tr>
+                        <td>Tournament Name</td>
+                        <td>  <input type='text' id='tournamentName' ng-model='file.tournamentName' required/> </td>
+                    </tr>
+                    <tr>
+                        <td>Bracket Url</td>
+                        <td><input type='text' id='bracketUrl' ng-model='file.bracketUrl'/></td>
+                    </tr>
+                    <tr>
+                        <td>Youtube Description</td>
+                        <td>
+                            <textarea ng-model="file.videoDescription" height="50" width="200"></textarea>
+                            <br/>
+                            <button ng-click="setDefaultDescription()" class="btn-success btn">Default Description</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-12 greyContainer">
+                <table>
+                    <h4>Clip</h4>
+                    <tr>
+                        <td>Start Time</td>
+                        <td>
+                            <input type='number' max='99' min='00' ng-model='file.start.time.Hour' size='2' required/>
+                            <input type='number' max='99' min='00' ng-model='file.start.time.Minute' size='2' required/>
+                            <input type='number' max='99' min='00' ng-model='file.start.time.Second' size='2' required/>
+                            <br/><br/>
+                            <input type="button" ng-click="getTimestamp(file.start)" value="Get Current Video Timestamp" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>End Time</td>
+                        <td>
+                            <input type='number' max='99' min='00' ng-model='file.end.time.Hour' size='2' required/>
+                            <input type='number' max='99' min='00' ng-model='file.end.time.Minute' size='2' required/>
+                            <input type='number' max='99' min='00' ng-model='file.end.time.Second' size='2' required/>
+                            <br/><br/>
+                            <input type="button" ng-click="getTimestamp(file.end)" value="Get Current Video Timestamp" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                                        <span>
+                                            <label>vcodec</label> <br/>
+                                            <select ng-model='file.vcodec'>
+                                                <option>copy</option>
+                                                <option>libx264</option>
+                                            </select>
+                                        </span>
+                        </td>
+                        <td>
+                                        <span>
+                                            <label>acodec</label> <br/>
+                                            <select ng-model='file.acodec'>
+                                                <option>copy</option>
+                                                <option>none</option>
+                                            </select>
+                                        </span>
+                        </td>
+                    </tr>
+
+                    <tr ng-show="file.vcodec == 'libx264'">
+                        <td>
+                                        <span>
+                                            <label>CFT</label> <br/>
+                                            <input type='number' size=10 ng-model='file.crf' />
+                                        </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-2"></div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-5 greyContainer">
+                <table>
+                    <tr>
+                        <td>Player1 <img src="images/curlyBrace.png" height="200" width="50"/></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>Sponsor</td>
+                                    <td><input type='text' id='player1Sponsor' ng-model='file.player1.sponsor'/></td>
+                                </tr>
+                                <tr>
+                                    <td>Smashtag</td>
+                                    <td><input type='text' id='player1Text' ng-model='file.player1.smashtag' required/></td>
+                                </tr>
+                                <tr>
+                                    <td>Character</td>
+                                    <td><select ng-options="c.Name for c in CharacterDataSvc.data"
+                                                id='player1Character'
+                                                ng-model='file.player1.character' /></td>
+                                </tr>
+                                <tr>
+                                    <td>Color</td>
+                                    <td><select ng-options="color for color in file.player1.character.Colors"
+                                                id='player1Color' ng-model='file.player1.color' /></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-lg-5 greyContainer">
+                <table>
+                    <tr>
+                        <td>Player2  <img src="images/curlyBrace.png" height="200" width="50"/></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>Sponsor</td>
+                                    <td><input type='text' id='player2Sponsor' ng-model='file.player2.sponsor'/></td>
+                                </tr>
+                                <tr>
+                                    <td>Smashtag</td>
+                                    <td><input type='text' id='player2Text' ng-model='file.player2.smashtag' required/></td>
+                                </tr>
+                                <tr>
+                                    <td>Character</td>
+                                    <td><select ng-options="character.Name for character in CharacterDataSvc.data"
+                                                id='player2Character'
+                                                ng-model='file.player2.character'  /></td>
+                                </tr>
+                                <tr>
+                                    <td>Color</td>
+                                    <td><select ng-options="color for color in file.player2.character.Colors"
+                                                id='player2Color' ng-model='file.player2.color' /></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4 greyContainer ">
+                <table>
+                    <tr>
+                        <td>Round</td>
+                        <td><input type='text' id='roundText' ng-model='file.round' required/></td>
+                    </tr>
+                    <tr>
+                        <td>Output File Name</td>
+                        <td><input type='text' id='outputFileName' ng-model='file.outputFileName' style='{width: 200px;}'/> </br>
+                            <input type='button' ng-click='changeOutputFilename()' value='Generate Name' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type='submit' value='Generate Clip' class="btn btn-success" id='submitClipForm' />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-lg-4"></div>
+        </div>
+    </form>
+</div>

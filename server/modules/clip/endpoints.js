@@ -25,6 +25,10 @@ router.route('/createClip').post(function(req, res) {
         var inFilepath = path.join(filedir, filename);
         var outFilepath = path.join(outputDir, outputFile);
 
+        var crf = req.body.video.file.crf;
+        var vcodec = req.body.video.file.vcodec;
+        var acodec = req.body.video.file.acodec;
+
         var startTime = req.body.video.file.start.timeStr;
         var endTime = req.body.video.file.end.timeStr;
 
@@ -36,8 +40,9 @@ router.route('/createClip').post(function(req, res) {
         var Player1 = new Player(player1.smashtag, player1.character, player1.color);
         var Player2 = new Player(player2.smashtag, player2.character, player2.color);
         var match = new Match(tournament, round);
-        var clip = new Clip(inFilepath, startTime, endTime, outFilepath);
 
+        //CLIP CREATION
+        var clip = new Clip(inFilepath, startTime, endTime, outFilepath, vcodec, acodec, crf);
         var cmd = clip.createFfmpegCommand();
         var killsig = ClipQueue.createKillsignalNumber();
         var options = {

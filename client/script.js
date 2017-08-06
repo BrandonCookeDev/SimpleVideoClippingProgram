@@ -15,8 +15,8 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 
 	$scope.test 			= 'Hello World';
 	$scope.uploadTF 		= true;
-	$scope.videoQueue 		= [];
 
+    $scope.videoQueue 		= [];
 	$scope.file = {
 	    id: '',
 		inputFileName:'',
@@ -50,8 +50,9 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
             character: '',
             color: ''
 		},
-		yesAudio : true,
-		noAudio : false,
+		crf: '',
+		vcodec: '',
+		acodec: '',
 		outputFileName : '',
         outputFileDirectory: '',
 		videoDescription: '',
@@ -505,13 +506,48 @@ myApp.directive('exportToCsvDoubles',function(){
 		            style:'display:none',
 		            href:'data:application/octet-stream;base64,'+btoa(csvString),
 		            download:'tournament.csv'
-		        }).appendTo('body')
-		        a[0].click()
+		        }).appendTo('body');
+		        a[0].click();
 		        a.remove();
 	        });
     	}
   	}
-	});
+});
+
+myApp.directive('videoClipForm', function(){
+    return{
+        templateUrl: 'partials/clipForm.partial.html'
+    }
+});
+
+myApp.directive('videoClipTable', function(){
+	return{
+		templateUrl: 'partials/clipTable.partial.html'
+	}
+});
+
+myApp.directive('videoClipSidePanel', function(){
+	return{
+		templateUrl: 'partials/clipPanel.partial.html'
+	}
+});
+
+$(function () {
+    $("#clickme").toggle(function () {
+        $(this).parent().animate({right:'0px'}, {queue: false, duration: 500});
+    }, function () {
+        $(this).parent().animate({right:'-280px'}, {queue: false, duration: 500});
+    });
+});
+
+
+$(function () {
+    $(".rightSidePanel").toggle(function () {
+        $(this).parent().animate({right:'0px'}, {queue: false, duration: 500});
+    }, function () {
+        $(this).parent().animate({right:'-280px'}, {queue: false, duration: 500});
+    });
+});
 
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
