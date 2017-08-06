@@ -494,7 +494,7 @@ myApp.directive('exportToCsvDoubles',function(){
 	        	for(var i=0; i<table.rows.length;i++){
 	        		var rowData = table.rows[i].cells;
 	        		for(var j=0; j<rowData.length;j++){
-						
+						var val = rowData[j].innerHTML.trim();
 	        			csvString = csvString + rowData[j].innerHTML.trim() + ",";
 	        		}
 	        		csvString = csvString.substring(0,csvString.length - 1);
