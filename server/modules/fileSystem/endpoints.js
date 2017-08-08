@@ -47,5 +47,4 @@ module.exports = function(server) {
             return res.sendStatus(500)
         }
     })
-
 };
