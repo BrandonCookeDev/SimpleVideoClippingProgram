@@ -36,6 +36,9 @@ class Clip{
 		if(this.acodec === 'none'){
 			ret = ret.replace('-acodec none', '-an');
 		}
+		if(this.vcodec === 'copy'){
+			ret = ret.replace('-crf  ', '');
+		}
 	
         log.info(ret);
         return ret;
