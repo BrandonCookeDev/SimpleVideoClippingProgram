@@ -106,7 +106,7 @@ class Youtube{
                             // Video title and description
                             snippet: {
                                 title: details.title,
-                                description: details.description,
+                                description: thisYT.description,
                                 tags: details.tags
                             },
                             // I don't want to spam my subscribers
@@ -142,10 +142,10 @@ class Youtube{
                     var logUpload = setInterval(function () {
                         try {
                             let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
+                            thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
 
                             if(thisYT.bytesUploaded) {
                                 //UPDATE ELEMENT IN THE VIDEO QUEUE WITH NEW BYTES DISPATCHED
-                                thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
                                 /*
                                  _.extend(_.findc(Youtube.queue,
                                  function(yt){return yt.id == thisYT.id}), thisYT);
@@ -157,8 +157,11 @@ class Youtube{
                             }
                         } catch (err) {
                             log.error(err.stack);
-                            thisYT.removeFromQueue();
                             console.error(err.message);
+
+                            thisYT.removeFromQueue();
+                            clearInterval(logUpload);
+                            
                             return reject(err.message);
                         }
                     }, 250);

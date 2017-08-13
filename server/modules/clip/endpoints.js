@@ -45,14 +45,14 @@ router.route('/createClip').post(function(req, res) {
         var clip = new Clip(inFilepath, startTime, endTime, outFilepath, vcodec, acodec, crf);
         var cmd = clip.createFfmpegCommand();
         var killsig = ClipQueue.createKillsignalNumber();
-        var options = {
-            killSignal: killsig
-        };
+        //var options = {
+        //    killSignal: killsig
+        //};
 
         log.info('running cmd process');
         log.debug(cmd);
 
-        var proc = exec(cmd, options, function (err, stdout, stderr) {
+        var proc = exec(cmd, {}, function (err, stdout, stderr) {
             ClipQueue.removeFromQueue(queueItem.id);
 
             if (err) {
