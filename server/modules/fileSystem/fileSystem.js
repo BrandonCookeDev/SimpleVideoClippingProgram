@@ -59,6 +59,24 @@ class FileSystem{
             }).catch(reject);
         })
     }
+
+    static getFileSizeStaticSync(filePath){
+        try{
+            var stats = FileSystem.getFileStatsStaticSync(filePath);
+            if(stats){
+                return stats.size;
+            }
+            else return new Error('No Stats for file ' + filePath);
+        }catch(err){
+            return err;
+        }
+    }
+
+    static getFileStatsStaticSync(filePath){
+        let fd = fs.openSync(filePath, 'r');
+        let stats = fs.fstatSync(fd);
+        return stats;
+    }
 }
 
 

@@ -57,6 +57,9 @@
 
                 <label ng-show="video.status == 'uploading'">Uploading... <br/> {{ video.file.bytesUploaded }}</label>
                 <label ng-show="video.status == 'uploaded'">Complete!</label>
+
+                <br/>
+                <label ng-show='video.file.error' style='color:red'>{{ video.file.error }} 
             </td>
             <td>
                 <button ng-click="delete(video)" class="btn btn-danger">Delete</button>

@@ -1,14 +1,16 @@
 'use strict';
 
 let _               = require('lodash');
+let path            = require('path');
 let prettyBytes     = require('pretty-bytes')
 let youtube         = require('youtube-api');
 let opn             = require('opn');
 let fs              = require('fs');
 let log             = require('winston');
 
+let FileSystem      = require('../fileSystem/fileSystem');
 let UploadManager   = require('./uploadManager');
-let uploadLock = null;
+let uploadLock      = null;
 
 class Youtube{
     static init(){
@@ -24,7 +26,6 @@ class Youtube{
     }
 
     constructor(file, p1sponsor, p1name, p2sponsor, p2name, tournament, round, description, bracket){
-
         this.file = file;
 		this.p1sponsor = p1sponsor;
         this.p1name = p1name;
@@ -36,7 +37,9 @@ class Youtube{
         this.bracket = bracket;
 
         this.id = _.join([tournament, round, p1name, p2name], "::");
+        this.filesize = FileSystem.getFileSizeStaticSync(this.file);
         this.bytesUploaded = 0;
+        this.uploadedTF = false;
         this.oauth = null;
     }
 
@@ -144,13 +147,16 @@ class Youtube{
                             let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
                             thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
 
+
                             if(thisYT.bytesUploaded) {
-                                //UPDATE ELEMENT IN THE VIDEO QUEUE WITH NEW BYTES DISPATCHED
-                                /*
-                                 _.extend(_.findc(Youtube.queue,
-                                 function(yt){return yt.id == thisYT.id}), thisYT);
-                                 */
-                                log.info(uploaded + thisYT.file);
+                                if(thisYT.filezie == thisYT.bytesUploaded){
+                                    log.info(thisYT.file + ' UPLOADED!');
+                                    clearInterval(logUpload);
+                                    return resolve(true);
+                                }
+                                else
+                                    log.info(uploaded + thisYT.file);
+                                
                             }
                             else{
                                 console.error('No bytes uploaded');
@@ -252,7 +258,10 @@ class Youtube{
     getUploadStatus(){
         let vid = _.find(Youtube.queue,
             function(video){return video.id == this.id});
-        return vid.bytesUploaded;
+
+        if(!vid.uploadedTF)
+            return vid.bytesUploaded;
+        else return vid.uploadedTF;
     }
 
     static addToQueue(youtubeObj){

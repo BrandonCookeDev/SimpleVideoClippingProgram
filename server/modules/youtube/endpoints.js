@@ -16,7 +16,10 @@ module.exports = function(server){
     server.get('/uploadStatus', function(req, res){
         var id = req.query.id;
         var uploadStatus = Youtube.getUploadStatus(id);
-        res.send(uploadStatus);
+
+        if(uploadStatus == true)
+            res.status(200).send('UPLOADED');
+        else res.send(uploadStatus);
     });
 
     server.post('/upload', function(req, res){

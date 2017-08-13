@@ -59,7 +59,8 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 		bracketUrl: '',
 		fileSize:'',
 		bytesUploaded:'',
-		percentUploaded:0
+		percentUploaded: 0,
+		error: null
 	};
 
     $scope.setDefaultDescription = function(){ $scope.file.videoDescription =
@@ -263,7 +264,8 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 					var uploadStatusLoop = setInterval(function(){
 						$http.get(statusUrl)
 							.then(function(response){
-								var complete = response.data.complete;
+								var data = response.data.complete;
+								var complete = data == 'true' ? true : data;
 								if(!complete)
 									video.file.bytesUploaded = response.data.bytesUploaded;
 								else {
@@ -280,16 +282,19 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 				}
 				else{
                     setStatus('created', video);
+					setError('Error, not 202. Response code was ' + data.status, video);
 				}
 			}).catch(function(err){
 				if(err)
 					log.error(err.stack);
 				setStatus('created', video);
+				setError(err.message, video);
 			});
 
 			setStatus('uploading', video);
 		}catch(err){
 			setStatus('created', video);
+			setError(err.message, video);
 			console.error(err.stack);
 		}
 	};
@@ -338,6 +343,11 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 		if(statuses.indexOf(status) < 0)
 			throw new Error('Status \'' + status + '\' is not valid. \nValid Statuses: ', statuses);
 		video.status = status;
+	}
+
+	function setError(error, video){
+		if(error)
+			video.error = error;
 	}
 
 	function notifyFailed(attemptedCreeatedVideo){
