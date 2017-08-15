@@ -63,13 +63,14 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 		error: null
 	};
 
-    $scope.setDefaultDescription = function(){ $scope.file.videoDescription =
-		$scope.file.tournamentName + '! Brackets and event info at ' + $scope.file.bracketUrl + '. \n \
-			Watch live and follow us at: \n \
-			http://twitch.tv/RecursionGG \n \
-			http://twitter.com/RecursionGG \n \
-			http://facebook.com/RecursionGG'; };
-
+    $scope.setDefaultDescription = function(){ 
+    	$scope.file.videoDescription =
+		$scope.file.tournamentName + '! Brackets and event info at ' + $scope.file.bracketUrl + ". \n" +
+			"Watch live and follow us at: \n"+
+			"http://twitch.tv/RecursionGG \n"+
+			"http://twitter.com/RecursionGG \n"+
+			"http://facebook.com/RecursionGG'"
+		}
 	/*
 	$scope.videoChanged = function(event){
 		var file = event.files[0];

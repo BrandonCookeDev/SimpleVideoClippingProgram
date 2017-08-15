@@ -136,20 +136,15 @@ class Youtube{
                         resolve();
                     });
 
-                    //TODO put video in UploadManager
-                    if(!req){
-                        thisYT.removeFromQueue();
-                        return reject('Youtube not connected');
-                    }
 
                     var logUpload = setInterval(function () {
-                        try {
+                        try {//TODO put video in UploadManager
+
                             let uploaded = `${prettyBytes(req.req.connection._bytesDispatched)} bytes uploaded. File: `;
                             thisYT.bytesUploaded = prettyBytes(req.req.connection._bytesDispatched);
 
-
                             if(thisYT.bytesUploaded) {
-                                if(thisYT.filezie == thisYT.bytesUploaded){
+                                if(thisYT.bytesUploaded === 'Done.'){
                                     log.info(thisYT.file + ' UPLOADED!');
                                     clearInterval(logUpload);
                                     return resolve(true);
@@ -161,14 +156,21 @@ class Youtube{
                             else{
                                 console.error('No bytes uploaded');
                             }
+
                         } catch (err) {
                             log.error(err.stack);
-                            console.error(err.message);
+                            console.error('hello',err.message);
 
                             thisYT.removeFromQueue();
                             clearInterval(logUpload);
-                            
-                            return reject(err.message);
+
+                            console.log(err.message.indexOf("Cannot read property 'req' of undefined") == 0);
+
+                            if(err.message.indexOf("Cannot read property 'req' of undefined") == 0)
+                                return reject('Youtube not connected');
+                            else
+                                return reject(err.message);
+
                         }
                     }, 250);
 
