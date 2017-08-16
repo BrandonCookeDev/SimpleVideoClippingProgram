@@ -281,6 +281,10 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 							})
                 	}, 2000);
 				}
+				else if(data.status == 404){
+                    setStatus('created', video);
+                    setError('Youtube token not acquired. Please acquire to upload.', video);
+				}
 				else{
                     setStatus('created', video);
 					setError('Error, not 202. Response code was ' + data.status, video);

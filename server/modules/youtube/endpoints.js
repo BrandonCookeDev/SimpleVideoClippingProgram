@@ -50,7 +50,9 @@ module.exports = function(server){
                 })
                 .catch(function(err){
                     log.error(err);
-                    res.sendStatus(500);
+                    if(err.message.indexOf('No access or refresh token is set.') >= 0)
+                        return res.status(404);
+                    return res.sendStatus(500);
                 })
         }
     });
