@@ -1,2 +1,3 @@
 @ECHO OFF
-PowerShell.exe -ExecutionPolicy Bypass -File .\GetChocolatelyWindows.ps1
+REM BATCH WRAPPER FOR INSTALL POWERSHELL SCRIPT
+PowerShell.exe -ExecutionPolicy Bypass -File .\Install.ps1
