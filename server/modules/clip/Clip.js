@@ -30,7 +30,7 @@ class Clip{
 		var ret = [];
 
 		ret = 
-			'ffmpeg -i %s -ss %s -t %s -vcodec %s -acodec %s -crf %s %s';
+			'ffmpeg -i "%s" -ss %s -t %s -vcodec %s -acodec %s -crf %s "%s"';
 
 		ret = format(ret, this.input, this.startTime, this.duration, this.vcodec, this.acodec, this.crf ? this.crf : '', this.output)
 		if(this.acodec === 'none'){
