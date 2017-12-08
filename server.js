@@ -23,6 +23,9 @@ var hostGl = '127.0.0.1';
 
 /** DIRECTORY TO LIST EDITABLE VIDEOS **/
 var videoDir = path.join(__dirname, 'client', 'videos');
+if(!fs.existsSync(videoDir)){
+	fs.mkdirSync(videoDir)
+}
 
 var app = express();
 app.use("/", express.static(path.join(__dirname,'client')));
