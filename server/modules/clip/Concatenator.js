@@ -95,6 +95,7 @@ class Concatenator{
 
 			console.log(cmd);
 
+			return cmd;
 		} catch(err){
 			console.error(err);
 		}
@@ -107,7 +108,7 @@ class Concatenator{
 			}
 
 			let cmd = 'ffmpeg -f concat -safe 0 -i ' + this.filepath + ' -c copy ' + this.outputName;
-
+			return cmd;
 		}catch(err){
 			console.error(err);
 		}

@@ -11,7 +11,7 @@ class OauthScraper {
 
 	async scrape(){
 		let response = wreck.get(this.url);
-
+		
 	}
 
 }
