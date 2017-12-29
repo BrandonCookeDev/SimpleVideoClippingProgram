@@ -13,6 +13,7 @@
     "aws-sdk": "^2.52.0",
     "body-parser": "^1.15.2",
     "bower": "^1.7.9",
+    "cheerio": "^1.0.0-rc.2",
     "co": "^4.6.0",
     "connect-form": "^0.2.1",
     "express": "^4.14.0",
@@ -27,6 +28,7 @@
     "node-cache": "^4.1.1",
     "opn": "^5.0.0",
     "pretty-bytes": "^4.0.2",
+    "uuid": "^3.1.0",
     "winston": "^2.3.1",
     "youtube-api": "^2.0.8"
   },
@@ -34,6 +36,6 @@
     "chai": "^4.0.0",
     "chai-as-promised": "^6.0.0",
     "mocha": "^3.4.2",
-    "wreck": "^12.2.0"
+    "wreck": "^12.5.1"
   }
 }
