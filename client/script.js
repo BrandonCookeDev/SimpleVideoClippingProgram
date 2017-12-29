@@ -4,7 +4,7 @@ var myApp = angular.module('myApp', [
 
 var URL = window.URL || window.webkitURL;
 
-myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
+myApp.controller('homeCtrl', function($scope, $http, $window, $sce, CharacterDataSvc){
     var id = 0;
     var statuses = ['notCreated', 'creating', 'created', 'uploading', 'uploaded', 'failed'];
 
@@ -12,6 +12,19 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 	$scope.selectVideos 	= [];
     $scope.videoURL 	 	= '';
     $scope.timestamp		= '';
+
+    $scope.oauthUrl			= null;
+    /*
+	    $http.get('/oauthUrl')
+	    	.then(data => {
+	    		console.log(data.data);
+	    		$scope.oauthUrl = $sce.trustAsResourceUrl(data.data);
+	    		window.open($scope.oauthUrl);
+	    	})
+	    	.catch(e => {
+	    		console.error(e);
+	    	})
+	*/
 
 	$scope.test 			= 'Hello World';
 	$scope.uploadTF 		= true;
@@ -81,6 +94,19 @@ myApp.controller('homeCtrl', function($scope, $http, $window, CharacterDataSvc){
 
 	$scope.characterData = $scope.CharacterDataSvc.data; //FROM characterData.js
 	
+	$scope.getOauth = function(){
+		$scope.oauthUrl	= null;
+	    $http.get('/oauthUrl')
+	    	.then(data => {
+	    		console.log(data.data);
+	    		$scope.oauthUrl = $sce.trustAsResourceUrl(data.data);
+	    		window.open($scope.oauthUrl);
+	    	})
+	    	.catch(e => {
+	    		console.error(e);
+	    	})
+	}
+
 	$scope.sanitizeObjectInputs = function(){
 		/*
 		$scope.file.tournamentName = $scope.file.tournamentName.replace(" ", "_");
@@ -546,6 +572,12 @@ myApp.directive('videoClipSidePanel', function(){
 		templateUrl: 'partials/clipPanel.partial.html'
 	}
 });
+
+myApp.directive('googleOauthIframe', function(){
+	return{
+		templateUrl: 'partials/googleOauthIframe.partial.html'
+	}
+})
 
 $(function () {
     $("#clickme").toggle(function () {

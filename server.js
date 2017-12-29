@@ -5,6 +5,7 @@ Youtube.init();
 var _		= require('lodash');
 var fs  	= require('fs');
 var path 	= require('path');
+var ngrok	= require('ngrok');
 var log 	= require('winston');
 var ffmpeg 	= require('ffmpeg');
 var moment  = require('moment');
@@ -157,8 +158,18 @@ var server = app.listen(portGl, function () {
 
   console.log("Example app listening at http://%s:%s", host, port)
 
+  // NGROK WILL MAKE COOKIE CUTTER PUBLICLY ACCESSIBLE 
+  // TO OUTSIDE USERS AT URL IN THE CALLBACK
+  ngrok.connect(portGl, function (err, url) {
+  	console.log('ngrok tunneled at', url)
+	process.env.PublicUrl = url;  	
+  });
+
 });
 
+//
+/** FUNCTIONS **/
+//
 function parseFileToClipObject(fileBuffer){
 	var clips = [];
 	var bufStr = fileBuffer.toString();

@@ -61,6 +61,20 @@ class Youtube{
         }));
     }
 
+    static getOauthUrl(){
+        Youtube.oauth = youtube.authenticate({
+            type: "oauth"
+            , client_id: Youtube.CREDENTIALS.web.client_id
+            , client_secret: Youtube.CREDENTIALS.web.client_secret
+            , redirect_url: Youtube.CREDENTIALS.web.redirect_uris[0]
+        });
+
+        return (Youtube.oauth.generateAuthUrl({
+            access_type: "offline"
+            , scope: ["https://www.googleapis.com/auth/youtube.upload"]
+        }));
+    }
+
     static verifyOAuth(code){
         this.code = code;
         let thisYT = this;
