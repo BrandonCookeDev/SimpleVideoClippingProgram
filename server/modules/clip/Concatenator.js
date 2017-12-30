@@ -4,6 +4,8 @@ let fs   = require('fs');
 let path = require('path');
 let uuid = require('uuid/v4');
 
+let getDuration = require('get-video-duration');
+
 class Concatenator{
 
 	constructor(videoArray, outputName){
@@ -11,6 +13,11 @@ class Concatenator{
 		this.outputName = outputName;
 		this.filepath 	= path.join(__dirname, 'concat' + uuid() + '.txt');
 		this.verifyVideoFiles();
+	}
+
+	async getVideoLength(filepath){
+		let len = await getDuration(filepath);
+		return len;
 	}
 
 	verifyVideoFiles(){
@@ -55,7 +62,7 @@ class Concatenator{
 		}
 	}
 
-	concatV2(){
+	async concatV2(){
 		try{
 			let cmd = 'ffmpeg -y'
 
@@ -63,31 +70,32 @@ class Concatenator{
 				cmd += ' -i ' + file;
 			})
 
-			cmd += " -f lavfi -i color=black:s=1920x1080 -filter_complex \\ \n \""
+			cmd += " -f lavfi -i color=black:s=1920x1080 -filter_complex \n \""
 
 			for(var i in this.videoArray){
 				let file = this.videoArray[i];
+				let len  = await this.getVideoLength(file);
 
 				if(i == 0){
-					cmd += '['+i+':v]format=pix_fmts=yuva420p,fade=t=out:st=10:d=1:alpha=1,setpts=PTS-STARTPTS[v0]; \\ \n';
+					cmd += '['+i+':v]format=pix_fmts=yuva420p,fade=t=out:st='+len+':d=1:alpha=1,setpts=PTS-STARTPTS[v0]; \n';
 				}else{
-					cmd += '['+i+':v]format=pix_fmts=yuva420p,fade=t=in:st=0:d=1:alpha=1,fade=t=out:st=10:d=1:alpha=1,setpts=PTS-STARTPTS+10/TB[v'+i+']; \\ \n';
+					cmd += '['+i+':v]format=pix_fmts=yuva420p,fade=t=in:st=0:d=1:alpha=1,fade=t=out:st='+len+':d=1:alpha=1,setpts=PTS-STARTPTS+'+len+'/TB[v'+i+']; \n';
 				}
 			}
 
-			cmd += '['+this.videoArray.length+':v]trim=duration=30[over]; \\ \n';
+			cmd += '['+this.videoArray.length+':v]trim=duration=30[over]; \n';
 
 			for(var i in this.videoArray){
 				let file = this.videoArray[i];
 
 				if(i==0){
-					cmd += '[over][v0]overlay[over1]; \\ \n';
+					cmd += '[over][v0]overlay[over1]; \n';
 				}
 				else if(i == this.videoArray.length -1){
-					cmd += '[over'+i+'][v'+i+']overlay=format=yuv420[outv]\" \\ \n'; 
+					cmd += '[over'+i+'][v'+i+']overlay=format=yuv420[outv]\"  \n'; 
 				}else{
 					let iPlus1 = parseInt(i) + 1;
-					cmd += '[over'+i+'][v'+i+']overlay[over'+(iPlus1)+'] \\ \n';
+					cmd += '[over'+i+'][v'+i+']overlay[over'+(iPlus1)+']  \n';
 				}
 			}
 
@@ -95,9 +103,11 @@ class Concatenator{
 
 			console.log(cmd);
 
+			cmd = cmd.replace(/(?:\r\n|\r|\n)/g, '');
 			return cmd;
 		} catch(err){
 			console.error(err);
+			throw err;
 		}
 	}
 
