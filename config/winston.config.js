@@ -1,25 +1,38 @@
 'use strict';
 
+let fs   = require('fs');
 let path = require('path');
 
+const LOG_DIR  = path.join(__dirname, '..', 'logs');
+const LOG_FILE = path.join(LOG_DIR, 'cookiecutter.log');
+
+// Create log dir and file if not exists
+if(!fs.existsSync(LOG_DIR)){
+    fs.mkdirSync(LOG_DIR);
+};
+if(!fs.existsSync(LOG_FILE)){
+    fs.openSync(LOG_FILE, 'w+');
+};
+
 // Setup Winston logging
-let log        = require('winston');
-let transports = config.log.transports;
+let log = require('winston');
+
+ //remove the default Console settings
 log.remove(log.transports.Console);
 
-if(transports.console) log.add({
+log.add(log.transports.Console, {
     level: 'debug',
     json: false,
     handleExceptions: true,
     colorize: true
-}, transports.console);
+});
 
-if(transports.file) log.add({
-    filename: path.join(__dirname, 'logs', 'cookiecutter.log');
+log.add(log.transports.File, {
+    filename: LOG_FILE,
     level: 'error',
     json: false,
     handleExceptions: true,
     colorize: false
-}, transports.file);
+});
 
 module.exports = log;

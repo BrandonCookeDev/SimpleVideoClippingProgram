@@ -11,11 +11,11 @@ function getEnvironment() {
     }
   }
   else {
-    console.log('No value for NODE_ENV environment variable.  Using deployed environment file by default.');
+    console.log('No value for NODE_ENV environment variable.  Using development environment file by default.');
   }
   
   try {
-    return require('./env/deployed.js');
+    return require('./env/development.js');
   }
   catch(e) {
     console.log('Unable to load development configuration file');
