@@ -1,8 +1,0 @@
-node_modules/
-<<<<<<< HEAD
-.idea/
-client/videos/*
-=======
-*.mp4
-.idea/
->>>>>>> 045997fb16372c4d5a588f5c76b0d97dde09719a
