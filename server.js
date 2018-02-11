@@ -2,6 +2,9 @@
 
 Promise = require('bluebird');
 
+let fs = require('fs');
+let path = require('path');
+
 let config  = require('./config/config');
 
 // This will give us a public endpoint to give to others 
@@ -12,10 +15,14 @@ let ngrok   = Promise.promisifyAll(require('ngrok'));
 let log     = require('./config/winston.config');
 let server  = require('./config/express.config');
 
+const VIDEOS_DIR = path.join(__dirname, 'client', 'videos');
 
 launchServer();
 async function launchServer(){
     try{
+        if(!fs.existsSync(VIDEOS_DIR))
+            fs.mkdirSync(VIDEOS_DIR)
+            
         let hostname = await ngrok.connectAsync(config.server.port);
         server.listen(config.server.port, function(err){
             if(err){
