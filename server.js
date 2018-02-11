@@ -9,6 +9,7 @@ Youtube.init();
 var _		= require('lodash');
 var fs  	= require('fs');
 var path 	= require('path');
+var ngrok	= require('ngrok');
 var log 	= require('winston');
 var ffmpeg 	= require('ffmpeg');
 var moment  = require('moment');
@@ -154,6 +155,10 @@ app.post('/uploadLocalFile', function(req, res){
 	res.sendStatus(500);
 });
 
+
+//
+/** FUNCTIONS **/
+//
 function parseFileToClipObject(fileBuffer){
 	var clips = [];
 	var bufStr = fileBuffer.toString();

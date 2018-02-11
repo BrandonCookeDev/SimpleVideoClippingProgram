@@ -56,4 +56,14 @@ module.exports = function(server){
                 })
         }
     });
+
+    server.get('/oauthUrl', function(req, res){
+        console.log('hit /oauthUrl endpoint');
+        try{
+            res.status(200).send(Youtube.getOauthUrl());
+        }
+        catch(e){
+            res.status(500).send(e);
+        }
+    })
 }

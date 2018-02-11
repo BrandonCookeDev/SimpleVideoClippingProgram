@@ -12,6 +12,8 @@ const ClipQueue   = require('./ClipQueue');
 const Player      = require('./Player');
 const Match       = require('./Match');
 
+const Concatenator = require('./Concatenator');
+
 const videoDir = path.join(DIR, '..'+path.sep+'..'+path.sep+'..', 'client', 'videos');
 
 ClipQueue.init();
@@ -83,6 +85,71 @@ router.route('/createClip').post(function(req, res) {
         res.status(500).send('unknown error');
     }
 });
+
+router.route('/concatClips').post(function(req, res){
+    try{
+        var files = req.body.videos;
+        var outputName = req.body.outputName;
+
+        var C = new Concatenator(files, outputName);
+
+        C.createFile();
+        var command = C.concatV1();
+
+        var proc = exec(command, {}, function(err, stdout, sterr){
+            if(err){
+                log.error(err);
+                return res.sendStatus(500);
+            }
+
+            C.deleteFile();
+            return res.sendStatus(200);
+        });
+
+        proc.on('close', (code, signal) => {
+            console.warn(
+                `child process terminated due to receipt of signal ${signal}, code: ${code}`);
+        });
+
+    } catch(e){
+        if(e){
+            log.error(e);
+            return res.sendStatus(500);
+        }
+        res.status(500).send('unknown error');
+    }
+})
+
+router.route('/concatClipsFade').post(function(req, res){
+    try{
+        var files = req.body.videos;
+        var outputName = req.body.outputName;
+
+        var C = new Concatenator(files, outputName);
+        var command = C.concatV2();
+
+        var proc = exec(command, {}, function(err, stdout, stderr){
+            if(err){
+                log.error(err);
+                return res.sendStatus(500);
+            }
+            
+            return res.sendStatus(200);
+        })
+
+        proc.on('close', (code, signal) => {
+            console.warn(
+                `child process terminated due to receipt of signal ${signal}, code: ${code}`);
+        });
+
+    } catch(e){
+        if(e){
+            log.error(e);
+            return res.sendStatus(500);
+        }
+        res.status(500).send('unknown error');
+    }
+})
 
 router.route('/clipCreationStatus').get( function(req, res){
     try {

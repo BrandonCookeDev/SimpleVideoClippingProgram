@@ -1,3 +1,9 @@
+'use strict';
+
+let ip = require('ip');
+console.log(ip.address());
+
+
 module.exports = {
     "web": {
         "client_id": "1063526789949-1nphpobeh9t5naah66rnmaslidlh1e4i.apps.googleusercontent.com",
