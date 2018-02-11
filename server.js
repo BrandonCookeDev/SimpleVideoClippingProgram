@@ -1,3 +1,7 @@
+Promise = require('bluebird');
+var ngrok = require('ngrok');
+Promise.promisifyAll(ngrok);
+
 var Youtube	= require('./server/modules/youtube/youtube');
 var youtube = new Youtube();
 Youtube.init();
@@ -150,15 +154,6 @@ app.post('/uploadLocalFile', function(req, res){
 	res.sendStatus(500);
 });
 
-var server = app.listen(portGl, function () {
-
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log("Example app listening at http://%s:%s", host, port)
-
-});
-
 function parseFileToClipObject(fileBuffer){
 	var clips = [];
 	var bufStr = fileBuffer.toString();
@@ -206,3 +201,19 @@ String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
+
+async function main(){
+	var remoteHost = await ngrok.connectAsync(portGl);
+	console.log('ngrok listening at %s', remoteHost);
+	
+	var server = app.listen(portGl, function () {
+	
+	  var host = server.address().address;
+	  var port = server.address().port;
+	
+	  console.log("Example app listening at http://%s:%s", host, port)
+	
+	});
+};
+
+main();
