@@ -1,6 +1,11 @@
 var webpack = require('webpack');
 var path = require('path');
 
+var ngrok = require('ngrok');
+ngrok.connect(8080, function(err, url){
+    console.log('ngrok listening at %s', url);
+});
+
 var parentDir = path.join(__dirname, '../');
 
 module.exports = {
