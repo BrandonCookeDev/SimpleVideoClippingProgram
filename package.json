@@ -1,0 +1,23 @@
+{
+  "name": "rcscookiecutter",
+  "version": "1.0.0",
+  "description": "A simple video clip creation program using Angular, Bootstrap, and Express with NodeJS",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrandonCookeDev/RCSCookieCutter.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "Brandon Cooke", "Jarrod Blanton"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BrandonCookeDev/RCSCookieCutter/issues"
+  },
+  "homepage": "https://github.com/BrandonCookeDev/RCSCookieCutter#readme"
+}
