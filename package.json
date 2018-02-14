@@ -14,10 +14,13 @@
   "keywords": [
     "nodejs"
   ],
-  "author": "Brandon Cooke", "Jarrod Blanton"
+  "author": "Brandon Cooke, Jarrod Blanton",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/BrandonCookeDev/RCSCookieCutter/issues"
   },
-  "homepage": "https://github.com/BrandonCookeDev/RCSCookieCutter#readme"
+  "homepage": "https://github.com/BrandonCookeDev/RCSCookieCutter#readme",
+  "dependencies": {
+    "path": "^0.12.7"
+  }
 }
