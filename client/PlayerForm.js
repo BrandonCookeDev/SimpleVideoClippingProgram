@@ -9,28 +9,45 @@ export default class PlayerForm extends Component{
 
         this.state = {
             players: [],
-            form: {
-                tag: '',
-                character: '',
-                color: ''
-            },
+            tag: '',
+            character: '',
+            color: '',
             error: ''
         }
 
+        this.clearForm = this.clearForm.bind(this);
         this.createPlayer = this.createPlayer.bind(this);
-        this.handleFormInputChange = this.handleFormInputChange.bind(this, 'form');
+        this.handleFormInputChange = this.handleFormInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    clearForm(){
+        document.getElementById('newPlayerForm').reset();
+        this.setState(prevState => ({
+            tag: '',
+            character: '',
+            color: ''
+        }))
     }
 
     createPlayer(){
         try{
-            var character = new Character(this.character, this.color);
+            var character = new Character(this.state.character, this.state.color);
             character.validateCharacter()
-            var player = new Player(this.tag, character);
+            var player = new Player(this.state.tag, character);
 
-            this.setState(prevState => ({
-                players: prevState.players.push(player)
-            }));
+            var playerExists = _.find(this.state.players, {tag: this.state.tag});
+            if(!playerExists){
+                this.setState(prevState => {
+                    prevState.players.push(player)
+                    return{
+                        players: prevState.players
+                    }
+                });
+            }
+            else{
+                throw new Error('Player ' + this.state.tag + ' already added');
+            }
 
         } catch(e){
             this.setState(prevState => ({
@@ -50,49 +67,72 @@ export default class PlayerForm extends Component{
     }
 
     handleSubmit(event) {
-        alert('A player was submitted: ' + this.state.value);
+        this.createPlayer();
+        this.clearForm();
         event.preventDefault();
     }
-
+ 
     render(){
 
         var characterData = CharacterList.getData();
-        var characterSelected = characterData.filter((o) => o.Name === this.state.form.character);
+        var characterSelected = characterData.filter((o) => o.Name === this.state.character);
         var colorOptions = characterSelected.length > 0 ? 
-            characterSelected.Colors.map(x => <option>{x}</option>) : [];   
+            characterSelected[0].Colors.map(x => <option>{x}</option>) : [];   
+        var playerRows = this.state.players.map(
+            x => 
+                <tr>
+                    <td><label>{x.tag}</label></td>
+                    <td><label>{x.character.name}</label></td>
+                    <td><label>{x.character.color}</label></td>
+                </tr>
+            )
 
-        //{CharacterList.getData()[this.state.form.character][Colors].map(x => <option>{x}</option>)}
+        //{CharacterList.getData()[this.state.character][Colors].map(x => <option>{x}</option>)}
                            
         return(
-            <form onSubmit={this.handleSubmit}>
-                <label id="playerError" value={this.state.error} />
-                <table>
+            <div>
+                <form onSubmit={this.handleSubmit} id="newPlayerForm">
+                    <label id="playerError" value={this.state.error} />
+                    <table>
+                        <tr>
+                            <td><label>Tag: </label></td>
+                            <td> 
+                                <input type='text' onChange={this.handleFormInputChange}
+                                    placeholder='xxxGrinder69mlgnoscopes' name='tag' length="100"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>Character: </label></td>
+                            <td>
+                                <select onChange={this.handleFormInputChange} name='character'>
+                                    <option>Select One</option>
+                                    {characterData.map(x => <option>{x.Name}</option>)}
+                                </select>
+                            </td>
+                        </tr>   
+                        <tr>
+                            <td><label>Color: </label></td>
+                            <td>
+                                <select onChange={this.handleFormInputChange} name='color'>  
+                                    <option>Select One</option>
+                                    {colorOptions}  
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <input type='submit' value='Add Player' />
+                </form>
+
+                <h4>Players</h4>
+                <form>
                     <tr>
-                        <td><label>Tag: </label></td>
-                        <td> 
-                            <input type='text' onChange={this.handleFormInputChange}
-                                placeholder='xxxGrinder69mlgnoscopes' name='form.tag'/>
-                        </td>
+                        <th>Tag</th>
+                        <th>Character</th>
+                        <th>Color</th>
                     </tr>
-                    <tr>
-                        <td><label>Character: </label></td>
-                        <td>
-                            <select onChange={this.handleFormInputChange} name='form.character'>
-                                {characterData.map(x => <option>{x.Name}</option>)}
-                            </select>
-                        </td>
-                    </tr>   
-                    <tr>
-                        <td><label>Color: </label></td>
-                        <td>
-                            <select onChange={this.handleFormInputChange} name='form.color'>  
-                                {colorOptions}  
-                            </select>
-                        </td>
-                    </tr>
-                </table>
-                <input type='submit' value='addPlayer' />
-            </form>
+                    {playerRows}
+                </form>
+            </div>
         )
     }
 }
@@ -113,13 +153,13 @@ class Character{
     }
 
     validateCharacter(){
-        let data = CharacterList.getData;
-        let characterExists = _.find(data, {"Name": this.name});
-        if(!characterExists)
+        let data = CharacterList.getData();
+        let character = _.find(data, {"Name": this.name});
+        if(!character)
             throw new Error('No character named ' + this.name);
 
-        let characterColorExists = data[character][Colors].includes(this.color);
-        if(!characterColorExists)
+        let characterColor = character.Colors.includes(this.color);
+        if(!characterColor)
             throw new Error(this.color + ' is not a color for ' + this.name);
         
         return true;
