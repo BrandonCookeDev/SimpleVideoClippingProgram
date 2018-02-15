@@ -91,20 +91,23 @@ export default class PlayerForm extends Component{
                            
         return(
             <div>
+                <h4>Add Player to Match</h4>
                 <form onSubmit={this.handleSubmit} id="newPlayerForm">
-                    <label id="playerError" value={this.state.error} />
+                    <label class="errorLabel" >{this.state.error}</label>
                     <table>
                         <tr>
                             <td><label>Tag: </label></td>
                             <td> 
-                                <input type='text' onChange={this.handleFormInputChange}
-                                    placeholder='xxxGrinder69mlgnoscopes' name='tag' length="100"/>
+                                <input type='text' onChange={this.handleFormInputChange} required
+                                    placeholder='xxxGrinder69mlgnoscopes' 
+                                    name='tag' length="100" class='form-control'/>
                             </td>
                         </tr>
                         <tr>
                             <td><label>Character: </label></td>
                             <td>
-                                <select onChange={this.handleFormInputChange} name='character'>
+                                <select onChange={this.handleFormInputChange} 
+                                    name='character' class='form-control'>
                                     <option>Select One</option>
                                     {characterData.map(x => <option>{x.Name}</option>)}
                                 </select>
@@ -113,16 +116,18 @@ export default class PlayerForm extends Component{
                         <tr>
                             <td><label>Color: </label></td>
                             <td>
-                                <select onChange={this.handleFormInputChange} name='color'>  
+                                <select onChange={this.handleFormInputChange} 
+                                    name='color' class='form-control'>  
                                     <option>Select One</option>
                                     {colorOptions}  
                                 </select>
                             </td>
                         </tr>
                     </table>
-                    <input type='submit' value='Add Player' />
+                    <input type='submit' value='Add Player' class='btn-success' />
                 </form>
-
+                
+                <br/>
                 <h4>Players</h4>
                 <form>
                     <tr>
@@ -132,6 +137,18 @@ export default class PlayerForm extends Component{
                     </tr>
                     {playerRows}
                 </form>
+            </div>
+        )
+    }
+}
+
+class PlayerTable extends Component{
+
+
+    render(){
+        return (
+            <div>
+                
             </div>
         )
     }

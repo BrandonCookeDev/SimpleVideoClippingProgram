@@ -3,24 +3,28 @@
     <head>
         <title> Ideal React Seed </title>
         <link rel="stylesheet" type="text/css" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" />
+        <style>
+            label.errorLabel{
+                color: red;
+                font-size: 12pt;
+                font-family: Courier New, Courier, monospace;
+            }
+        </style>
     </head>
     <body>
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <div style="display: flex; flex-direction: column">
-                        <div id="app"></div>
-                        <div id="timer"></div>
-                    </div>
+                    <div id="tournamentForm"></div>
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row"> 
                 <div class="col-md-6">
                     <div id="playerForm"></div>
                 </div>
                 <div class="col-md-6">
-                    <div id="videoForm"></div>
+                    <div id="youtubeForm"></div>
                 </div> 
             </div>
         </div>

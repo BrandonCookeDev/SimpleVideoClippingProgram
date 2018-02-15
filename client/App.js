@@ -7,4 +7,4 @@ import ReactDOM from 'react-dom'
         return <p>This is my new react app</p>
     }
 }
-
+ 
