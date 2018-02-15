@@ -1,7 +1,6 @@
 'use strict';
 // console.log(module);
 const mongoose = require('mongoose');
-const Promise = require('bluebird');
 
 var crypto = require('crypto');
 Promise.promisifyAll(crypto);
