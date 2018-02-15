@@ -1,4 +1,6 @@
 'use strict';
+// c9 doesn't like modifying the global 'Promise', just ignore it
+Promise = require('bluebird');
 // Express
 const express = require('express');
 const path = require('path'); // maybe need to use this for static hosting for frontend?
