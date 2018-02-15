@@ -28,28 +28,38 @@ export default class VideoForm extends Component{
       }
 
     handleSubmit(event) {
-        alert('A name was submitted: ' + this.state.value);
+        alert('A name was submitted: ' + this.state.video);
         event.preventDefault();
     }
 
     render(){
         return(
             <form onSubmit={this.handleSubmit}>
-                <label>Video Title</label>
-                <input type='text' name='video.title' 
-                        onChange={this.handleInputChange}/>
-                <br/>
-                <label>description</label>
-                <textarea rows="4" columns="25" name="video.description"
-                        value={this.state.video.description} 
-                        onChange={this.handleInputChange}>
-                </textarea>
-                <br/>
-                <label>tags</label>
-                <input type="text" name="video.tags" 
-                    placeholder="separated by comma" 
-                    onChange={this.handleInputChange}/>
-                <br/>
+                <table>
+                    <tr>
+                        <td><label>Video Title</label></td>
+                        <td>
+                            <input type='text' name='video.title' 
+                                onChange={this.handleInputChange}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>description</label></td>
+                        <td>
+                            <textarea rows="4" columns="25" name="video.description"
+                                    value={this.state.video.description} 
+                                    onChange={this.handleInputChange} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>tags</label></td>
+                        <td>
+                            <input type="text" name="video.tags" 
+                                placeholder="separated by comma" 
+                                onChange={this.handleInputChange}/>
+                        </td>
+                    </tr> 
+                </table>
                 <input type="submit" value="Submit" />
             </form>
         )
