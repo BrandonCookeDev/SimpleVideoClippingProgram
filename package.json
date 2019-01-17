@@ -37,7 +37,7 @@
   "devDependencies": {
     "chai": "^4.0.0",
     "chai-as-promised": "^6.0.0",
-    "mocha": "^3.4.2",
-    "wreck": "^12.5.1"
+    "mocha": "^5.2.0",
+    "wreck": "^14.1.3"
   }
 }
