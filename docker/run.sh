@@ -7,5 +7,6 @@ IMAGE_NAME=rcs-cookie-cutter
 
 docker run \
 	-p 1337:1337 \
-	-mount $VIDEODIR:/app/current/client/videos \
+	-mount type=bind,source=$VIDEODIR,target=/app/current/client/videos \
+	$@ \
 	-it $IMAGE_NAME
