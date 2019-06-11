@@ -148,6 +148,7 @@ myApp.controller('homeCtrl', function($scope, $http, $window, $sce, CharacterDat
     $scope.getFile = function(){
     	$scope.file.inputFileName = $scope.selectedVideo.selected;
     	$scope.videoURL = 'videos/' + $scope.selectedVideo.selected;
+    	$scope.videoType = $scope.videoURL.substring($scope.videoURL.lastIndexOf('.') + 1);
 	};
 
 	$scope.changeOutputFilename = function(){

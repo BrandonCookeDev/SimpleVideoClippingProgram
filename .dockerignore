@@ -1,0 +1,12 @@
+.idea/
+.vs/
+.vscode/
+node_modules/
+client/videos/
+test/
+scripts/
+devops/
+docker/
+
+.gitignore
+.gitignore.orig

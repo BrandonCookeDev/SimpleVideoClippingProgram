@@ -1,15 +1,25 @@
 Promise = require('bluebird');
-var ngrok = require('ngrok');
-Promise.promisifyAll(ngrok);
 
 var Youtube	= require('./server/modules/youtube/youtube');
 var youtube = new Youtube();
 Youtube.init();
 
+////////////////////////
+// ERROR HANDLER
+function errHandler(e){
+	console.error('Error caught! ' + e.message);
+	console.error(e);
+}
+process.on('error', errHandler);
+process.on('UnhandledRejection', errHandler);
+process.on('UncaughtException', errHandler);
+//
+////////////////////////
+
+
 var _		= require('lodash');
 var fs  	= require('fs');
 var path 	= require('path');
-var ngrok	= require('ngrok');
 var log 	= require('winston');
 var ffmpeg 	= require('ffmpeg');
 var moment  = require('moment');
@@ -34,6 +44,7 @@ if(!fs.existsSync(videoDir)){
 
 var app = express();
 app.use("/", express.static(path.join(__dirname,'client')));
+app.use('/node_modules', express.static(path.join(__dirname,'node_modules')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(fileUpload());
@@ -208,8 +219,6 @@ String.prototype.replaceAll = function(search, replacement) {
 };
 
 async function main(){
-	var remoteHost = await ngrok.connectAsync(portGl);
-	console.log('ngrok listening at %s', remoteHost);
 	
 	var server = app.listen(portGl, function () {
 	

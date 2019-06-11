@@ -1,2 +1,4 @@
 <h4>Video:</h4> {{videoURL}}
-<video ng-src="{{videoURL}}" id="previewVideo" controls autoplay></video>
+<video  id="previewVideo" class="video-js vjs-default-skin" controls autoplay>
+	<src ng-src="{{videoURL}}" type="{{videoType}}" />
+</video>
