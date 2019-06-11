@@ -1,4 +1,11 @@
-node_modules/
+.vs/
+.vscode/
 .idea/
-client/videos/*
+
+Adobe After Effects Auto-Save/
+node_modules/
+client/videos/
+
 *.mp4
+*.aep
+
